@@ -1,0 +1,3 @@
+[submodule "roles/ansible-role-easybuild"]
+	path = roles/ansible-role-easybuild
+	url = https://github.com/ffinfo/ansible-role-easybuild.git
