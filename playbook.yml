@@ -1,11 +1,12 @@
 ---
 
 - hosts: all
-  remote_user: root
-  become_user: root
-  become: true
-  roles:
-  - role: ansible-role-easybuild
+#  remote_user: root
+#  become_user: root
+#  become: true
+#  roles:
+#  - role: ansible-role-easybuild
 
   tasks:
-  - shell: 'echo test'
+  - easybuild: bla=bla bla2=bla2 deps=blabla,blabla2
+
