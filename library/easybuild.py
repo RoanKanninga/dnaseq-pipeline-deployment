@@ -19,9 +19,9 @@ module = AnsibleModule(
     },
     supports_check_mode=True)
 
-eb_command = "bash -c \"module load EasyBuild && eb --help\""
+eb_command = "eb --help"
 
-(rc, stdout, stderr) =  module.run_command(eb_command)
+(rc, stdout, stderr) =  module.run_command("bash -c \"module load EasyBuild && " + eb_command + "\"")
 
 print json.dumps({
     "arguments" : module.params,
