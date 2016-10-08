@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import json
+import sys
 
 from ansible.module_utils.basic import *
 
@@ -21,11 +22,15 @@ module = AnsibleModule(
 
 eb_command = "eb --help"
 
-(rc, stdout, stderr) =  module.run_command("bash -c \"module load EasyBuild && " + eb_command + "\"")
+(rc, stdout, stderr) =  module.run_command("bash -lc \"set -e; module load EasyBuild && " + eb_command + "; exit $?\"")
+
+failed = False
+if rc != 0: failed = True
 
 print json.dumps({
     "arguments" : module.params,
     "changed" : True,
+    "failed" : failed,
     "exitcode": rc
     # "stdout": stdout,
     # "stderr": stderr
