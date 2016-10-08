@@ -40,11 +40,11 @@
   - name: Create user tmp dir
     file: path={{ BASE }}/tmp state=directory
 
-  - name: Create user HPC_EB_PREFIX dir
-    file: path={{ HPC_EB_PREFIX }} state=directory
+  - name: Create user HPC_EBCONFIGS_PREFIX dir
+    file: path={{ HPC_EBCONFIGS_PREFIX }} state=directory
 
   - name: Download Easybuild Configs
-    get_url: url="https://github.com/molgenis/easybuild-easyconfigs/archive/v2.8.4-UMCG.tar.gz" dest="{{ HPC_EB_PREFIX }}/v2.8.4-UMCG.tar.gz" timeout=300
+    get_url: url="https://github.com/molgenis/easybuild-easyconfigs/archive/v2.8.4-UMCG.tar.gz" dest="{{ HPC_EBCONFIGS_PREFIX }}/v2.8.4-UMCG.tar.gz" timeout=300
 
   - name: extract Easybuild Configs
-    command: tar x -C {{ HPC_EB_PREFIX }} -f {{ HPC_EB_PREFIX }}/v2.8.4-UMCG.tar.gz
+    command: tar x -C {{ HPC_EBCONFIGS_PREFIX }} -f {{ HPC_EBCONFIGS_PREFIX }}/v2.8.4-UMCG.tar.gz
