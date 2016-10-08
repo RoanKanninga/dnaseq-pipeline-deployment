@@ -7,6 +7,44 @@
   roles:
   - role: ansible-role-easybuild
 
+  vars:
+    HPC_ENV_PREFIX: "/apps"
+    GROUP: "bbmri"
+    HPC_GROUP_PREFIX: "/groups/{{ GROUP }}"
+    HPC_EBCONFIGS_PREFIX: "/apps/software/easyconfigs"
+    TMP: "tmp01"
+    BASE: "{{ HPC_GROUP_PREFIX }}/{{ TMP }}"
+
+
   tasks:
   - easybuild:
 
+  - name: Create user groups dir
+    file: path={{ HPC_GROUP_PREFIX }} state=directory
+
+  - name: Create user data dir
+    file: path={{ HPC_ENV_PREFIX }}/data state=directory
+
+  - name: Create user generatedscripts dir
+    file: path={{ BASE }}/generatedscripts state=directory
+
+  - name: Create user Samplesheets dir
+    file: path={{ BASE }}/Samplesheets state=directory
+
+  - name: Create user projects dir
+    file: path={{ BASE }}/projects state=directory
+
+  - name: Create user logs dir
+    file: path={{ BASE }}/logs state=directory
+
+  - name: Create user tmp dir
+    file: path={{ BASE }}/tmp state=directory
+
+  - name: Create user HPC_EB_PREFIX dir
+    file: path={{ HPC_EB_PREFIX }} state=directory
+
+  - name: Download Easybuild Configs
+    get_url: url="https://github.com/molgenis/easybuild-easyconfigs/archive/v2.8.4-UMCG.tar.gz" dest="{{ HPC_EB_PREFIX }}/v2.8.4-UMCG.tar.gz" timeout=300
+
+  - name: extract Easybuild Configs
+    command: tar x -C {{ HPC_EB_PREFIX }} -f {{ HPC_EB_PREFIX }}/v2.8.4-UMCG.tar.gz
