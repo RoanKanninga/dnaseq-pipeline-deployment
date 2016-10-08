@@ -17,7 +17,7 @@
 
 
   tasks:
-  - easybuild:
+  - easybuild: easyconfigs="test"
 
   - name: Create user groups dir
     file: path={{ HPC_GROUP_PREFIX }} state=directory

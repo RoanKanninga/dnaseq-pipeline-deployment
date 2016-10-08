@@ -5,33 +5,34 @@ import sys
 
 from ansible.module_utils.basic import *
 
+changed = True
+failed = False
+
 module = AnsibleModule(
     argument_spec={
-        'name': {'required': False, 'type': 'str'},
-        'version': {'default': None, 'required': False, 'type': 'str'},
-        'state': {
-            'default': 'present',
-            'required': False,
-            'choices': ['present', 'absent', 'latest']
-        },
-        'channels': {'default': None, 'required': False},
-        'executable': {'default': None, 'required': False},
-        'extra_args': {'default': None, 'required': False, 'type': 'str'}
+        'easyconfigs': {'required': True, 'type': 'str'},
+        'module': {'default': "EasyBuild", 'required': False, 'type': 'str'},
+        'extra_args': {'default': "", 'required': False, 'type': 'str'}
     },
     supports_check_mode=True)
 
-eb_command = "eb --help"
+# TODO: Add command constructor
 
-(rc, stdout, stderr) =  module.run_command("bash -lc \"set -e; module load EasyBuild && " + eb_command + "; exit $?\"")
+eb_command = "echo eb " + module.params["extra_args"] + " " + module.params["easyconfigs"] + " --help"
 
-failed = False
+(rc, stdout, stderr) =  module.run_command("bash -lc \"set -e; module load " + module.params["module"] + " && " + eb_command + "; exit $?\"")
+
+# TODO: Add check on output if EasyBuild did install something
+
+# Check exit code
 if rc != 0: failed = True
 
 print json.dumps({
+    "eb_command": eb_command,
     "arguments" : module.params,
-    "changed" : True,
+    "changed" : changed,
     "failed" : failed,
-    "exitcode": rc
-    # "stdout": stdout,
-    # "stderr": stderr
+    "exitcode": rc,
+    "stdout": stdout,
+    "stderr": stderr
 })
