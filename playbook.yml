@@ -9,6 +9,7 @@
 
   vars:
     HPC_ENV_PREFIX: "/apps"
+    SOURCE_HPC_ENV: "TRUE"
     GROUP: "bbmri"
     HPC_GROUP_PREFIX: "/groups/{{ GROUP }}"
     HPC_EBCONFIGS_PREFIX: "/apps/software/easyconfigs"
@@ -19,32 +20,48 @@
   tasks:
   - easybuild: easyconfigs="test"
 
+  - group: name={{ GROUP }} state=present
+
+  - user: name=vagrant shell=/bin/bash groups=easybuild,bbmri,vagrant append=yes
+
   - name: Create user groups dir
-    file: path={{ HPC_GROUP_PREFIX }} state=directory
+    file: path={{ HPC_GROUP_PREFIX }} state=directory state=directory owner=vagrant group=vagrant mode=0777 recurse=yes
 
   - name: Create user data dir
-    file: path={{ HPC_ENV_PREFIX }}/data state=directory
+    file: path={{ HPC_ENV_PREFIX }}/software state=directory owner=vagrant group=vagrant mode=0777 recurse=yes
+
+  - name: Create user data dir
+    file: path={{ HPC_ENV_PREFIX }}/data state=directory owner=vagrant group=vagrant mode=0777 recurse=yes
 
   - name: Create user generatedscripts dir
-    file: path={{ BASE }}/generatedscripts state=directory
+    file: path={{ BASE }}/generatedscripts state=directory owner=vagrant group={{ GROUP }} mode=0775 recurse=yes
 
   - name: Create user Samplesheets dir
-    file: path={{ BASE }}/Samplesheets state=directory
+    file: path={{ BASE }}/Samplesheets state=directory owner=vagrant group={{ GROUP }} mode=0775 recurse=yes
 
   - name: Create user projects dir
-    file: path={{ BASE }}/projects state=directory
+    file: path={{ BASE }}/projects state=directory owner=vagrant group={{ GROUP }} mode=0775 recurse=yes
 
   - name: Create user logs dir
-    file: path={{ BASE }}/logs state=directory
+    file: path={{ BASE }}/logs state=directory owner=vagrant group={{ GROUP }} mode=0775 recurse=yes
 
   - name: Create user tmp dir
-    file: path={{ BASE }}/tmp state=directory
+    file: path={{ BASE }}/tmp state=directory owner=vagrant group={{ GROUP }} mode=0775 recurse=yes
 
   - name: Create user HPC_EBCONFIGS_PREFIX dir
-    file: path={{ HPC_EBCONFIGS_PREFIX }} state=directory
+    file: path={{ HPC_EBCONFIGS_PREFIX }} state=directory owner=vagrant group={{ GROUP }} mode=0775 recurse=yes
 
   - name: Download Easybuild Configs
     get_url: url="https://github.com/molgenis/easybuild-easyconfigs/archive/v2.8.4-UMCG.tar.gz" dest="{{ HPC_EBCONFIGS_PREFIX }}/v2.8.4-UMCG.tar.gz" timeout=300
 
   - name: extract Easybuild Configs
     command: tar x -C {{ HPC_EBCONFIGS_PREFIX }} -f {{ HPC_EBCONFIGS_PREFIX }}/v2.8.4-UMCG.tar.gz
+
+  - name: Deploy NGS_RNA
+    shell: source /apps/modules/modules.bashrc && module load EasyBuild && eb /apps/software/easyconfigs/easybuild-easyconfigs-2.8.4-UMCG/easybuild/easyconfigs/n/NGS_RNA/NGS_RNA-3.2.3.eb --robot --robot-paths="/apps/software/easyconfigs/easybuild-easyconfigs-2.8.4-UMCG/easybuild/easyconfigs/:"
+
+  - name: Deploy Biopet
+    shell: source /apps/modules/modules.bashrc && module load EasyBuild && eb /apps/software/easyconfigs/easybuild-easyconfigs-2.8.4-UMCG/easybuild/easyconfigs/b/Biopet/Biopet-0.7.0-SNAPSHOT-ce86ddc4.eb --robot --robot-paths="/apps/software/easyconfigs/easybuild-easyconfigs-2.8.4-UMCG/easybuild/easyconfigs/:"
+
+  #eb /apps/software/easyconfigs/easybuild-easyconfigs-2.8.4-UMCG/easybuild/easyconfigs/n/NGS_RNA/NGS_RNA-3.2.3.eb --robot --robotpath "/apps/software/easyconfigs/easybuild-easyconfigs-2.8.4-UMCG/easybuild/easyconfigs/:"
+  # /apps/software/easyconfigs/easybuild-easyconfigs-2.8.4-UMCG/easybuild/easyconfigs/b/Biopet/Biopet-0.7.0-SNAPSHOT-ce86ddc4.eb
