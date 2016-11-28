@@ -2,3 +2,4 @@
 .vagrant/
 .project
 .pydevproject
+playbook.retry
