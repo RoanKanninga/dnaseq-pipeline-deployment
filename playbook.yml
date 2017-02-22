@@ -14,7 +14,7 @@
     DEFAULT_USER: "vagrant"
     HPC_GROUP_PREFIX: "/groups/{{ GROUP }}"
     HPC_EBCONFIGS_PREFIX: "/apps/software/easyconfigs"
-    BBMRI_RELEASE_VERSION: "2.8.6-BBMRI"
+    BBMRI_RELEASE_VERSION: "2.8.7-BBMRI"
     TMP: "tmp01"
     BASE: "{{ HPC_GROUP_PREFIX }}/{{ TMP }}"
 
@@ -62,7 +62,10 @@
     get_url: url="https://github.com/molgenis/easybuild-easyconfigs/archive/{{ BBMRI_RELEASE_VERSION }}.tar.gz" dest="{{ HPC_EBCONFIGS_PREFIX }}/{{ BBMRI_RELEASE_VERSION }}.tar.gz" timeout=300
 
   - name: extract Easybuild Configs
-    command: tar x -C {{ HPC_EBCONFIGS_PREFIX }} -f {{ HPC_EBCONFIGS_PREFIX }}/{{ BBMRI_RELEASE_VERSION }}.tar.gz
+    unarchive: 
+        src: {{ HPC_EBCONFIGS_PREFIX }}/{{ BBMRI_RELEASE_VERSION }}.tar.gz 
+        dest: {{ HPC_EBCONFIGS_PREFIX }}
+        remote_src: True
 
 #  - name: Download reference set
 #    get_url: url="https://barmsijs.lumc.nl/bios/bios-reference-empty.tar.gz" dest="{{ reference_dir }}/bios-reference.tar.gz" owner=easybuild group=easybuild mode=0775 timeout=300
