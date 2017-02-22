@@ -94,12 +94,12 @@
   - copy: src=~/Downloads/.bashrc dest=/etc/skel/.bashrc owner=root group=root mode=0644 
 
 #  - name: Deploy FastQC
-#    shell: source /usr/share/lmod/lmod/init/profile &&source {{ HPC_ENV_PREFIX }}/modules/modules.bashrc && module load EasyBuild && eb {{ HPC_EBCONFIGS_PREFIX }}/easybuild-easyconfigs-{{ BBMRI_RELEASE_VERSION }}/easybuild/easyconfigs/f/FastQC/FastQC-0.10.1-Java-1.7.0_80.eb  --robot --robot-paths="{{ HPC_EBCONFIGS_PREFIX }}/easybuild-easyconfigs-{{ BBMRI_RELEASE_VERSION }}/easybuild/easyconfigs/:"
+#    shell: source /usr/share/lmod/lmod/init/profile && source {{ HPC_ENV_PREFIX }}/modules/modules.bashrc && module load EasyBuild && eb {{ HPC_EBCONFIGS_PREFIX }}/easybuild-easyconfigs-{{ BBMRI_RELEASE_VERSION }}/easybuild/easyconfigs/f/FastQC/FastQC-0.10.1-Java-1.7.0_80.eb  --robot --robot-paths="{{ HPC_EBCONFIGS_PREFIX }}/easybuild-easyconfigs-{{ BBMRI_RELEASE_VERSION }}/easybuild/easyconfigs/:"
 #    become_user: easybuild
 #    become: true
 
   - name: Deploy Biopet
-    shell: source /usr/share/lmod/lmod/init/profile &&source {{ HPC_ENV_PREFIX }}/modules/modules.bashrc && module load EasyBuild && eb {{ HPC_EBCONFIGS_PREFIX }}/easybuild-easyconfigs-{{ BBMRI_RELEASE_VERSION }}/easybuild/easyconfigs/b/Biopet/Biopet-BIOS-86e77e81.eb --robot --robot-paths="{{ HPC_EBCONFIGS_PREFIX }}/easybuild-easyconfigs-{{ BBMRI_RELEASE_VERSION }}/easybuild/easyconfigs/:"
+    shell: source /usr/share/lmod/lmod/init/profile && source {{ HPC_ENV_PREFIX }}/modules/modules.bashrc && module load EasyBuild && eb {{ HPC_EBCONFIGS_PREFIX }}/easybuild-easyconfigs-{{ BBMRI_RELEASE_VERSION }}/easybuild/easyconfigs/b/Biopet/Biopet-BIOS-86e77e81.eb --robot --robot-paths="{{ HPC_EBCONFIGS_PREFIX }}/easybuild-easyconfigs-{{ BBMRI_RELEASE_VERSION }}/easybuild/easyconfigs/:"
     become_user: easybuild																
     become: true
 
