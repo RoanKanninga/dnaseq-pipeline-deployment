@@ -1,0 +1,9 @@
+#easybuild_prefix: "{{ lookup('env', 'HOME') }}/.local/easybuild"
+easybuild_source: "{{ easybuild_prefix }}/src"
+easybuild_modules: "{{ easybuild_prefix }}/modules"
+easybuild_software: "{{ easybuild_prefix }}/software"
+lmod_version: "6.1.3"
+lua_version: "5.1.4.8"
+modules_syntax: Lua
+lua_prefix: "{{ easybuild_prefix }}/software/Lua/{{ lua_version }}"
+lmod_prefix: "{{ easybuild_prefix }}/software"

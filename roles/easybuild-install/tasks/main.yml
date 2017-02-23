@@ -1,0 +1,47 @@
+---
+- name: Fetch which is the latest release of easybuild
+  shell: >-
+    wget https://pypi.python.org/pypi/easybuild -O - |grep title|head -1|awk {'print $2'}
+  register: easybuild_version
+
+- name: Debug the easybuildversion
+  debug: var=easybuild_version
+
+- name: Create required directories
+  file: dest={{item}} state=directory mode=0775
+  with_items:
+  - "{{ easybuild_source }}/l/Lmod"
+  - "{{ easybuild_source }}/l/Lua"
+  - "{{ lua_prefix }}"
+  - "{{ easybuild_software}}/EasyBuild/{{ easybuild_version.stdout }}"
+  - "{{ easybuild_modules }}/all/EasyBuild"
+  - "{{ easybuild_modules }}/tools/EasyBuild"
+
+- name: Download LMOD
+  # problems with url_get due to HTTP redirect (get connection reset error) - use wget instead
+  shell: wget https://github.com/TACC/Lmod/archive/{{ lmod_version }}.zip -P {{easybuild_source}}/l/Lmod
+
+- name: Download LUA
+  get_url:
+    url=http://sourceforge.net/projects/lmod/files/lua-{{ lua_version }}.tar.gz/download
+    dest={{easybuild_source}}/l/Lua
+    mode=0644
+
+# Intermittently Ansible unarchive (ansible 2.2.1.) does not
+# recognize that the dest directory exists - have not found the cause
+- name: Uncompress LMOD
+  unarchive: src={{ easybuild_source }}/l/Lmod/{{ lmod_version }}.zip dest={{ easybuild_source }}/l/Lmod remote_src=yes
+
+- name: Uncompress LUA
+  unarchive: src={{ easybuild_source }}/l/Lua/lua-{{ lua_version }}.tar.gz dest={{ easybuild_source }}/l/Lua remote_src=yes
+
+- name: Compile and install Lua
+  shell: cd {{ easybuild_source }}/l/Lua/lua-{{ lua_version }}; ./configure --with-static=yes --prefix={{ easybuild_software }}/Lua/{{ lua_version }} && make && make install
+
+- name: Compile and install Lmod
+  shell: export PATH={{ easybuild_software }}/Lua/{{ lua_version }}/bin:$PATH; cd {{ easybuild_source }}/l/Lmod/Lmod-{{ lmod_version }}; ./configure --prefix={{ easybuild_software }} --with-lua-include={{ easybuild_software }}/Lua/{{ lua_version }}/include --with-mpathSearch=YES --with-caseIndependentSorting=YES && make install
+
+- name: Install EasyBuild using python-pip
+  pip:
+    name: easybuild
+    virtualenv: "{{ easybuild_software }}/virtualenv"
