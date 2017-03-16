@@ -67,6 +67,7 @@
     file: path={{ HPC_EBCONFIGS_PREFIX }} state=directory mode=0775 recurse=yes
 
 #  - name: Download Easybuild Configs
+# FIXME, get_url failed. We did wget this file manually on SHAHK for now.
  #   get_url: url="https://github.com/molgenis/easybuild-easyconfigs/archive/{{ BBMRI_RELEASE_VERSION }}.tar.gz" dest="{{ HPC_EBCONFIGS_PREFIX }}/{{ BBMRI_RELEASE_VERSION }}.tar.gz" timeout=300
 
 
