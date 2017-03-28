@@ -1,31 +1,11 @@
 ---
-
 - hosts: all
-#  remote_user: root
-#  become_user: root
-#  become: true
+  remote_user: gvandervries
+  become: no
   roles:
   - role: easybuild-install
 
-  vars:
-    NGS_DNA_VERSION: "3.3.1"
-    ROOT: "/home/gvandervries/BIOS"
-    HPC_ENV_PREFIX: "{{ ROOT }}/apps"
-    GROUP: "bbmri"
-    DEFAULT_USER: "gvandervries"
-    HPC_GROUP_PREFIX: "{{ ROOT }}/groups/{{ GROUP }}"
-    HPC_EBCONFIGS_PREFIX: "{{ HPC_ENV_PREFIX }}/software/easyconfigs"
-    REFERENCE_DIR: "{{ HPC_ENV_PREFIX }}/data/"
-    BBMRI_RELEASE_VERSION: "2.8.7-BBMRI"
-    TMP: "tmp01"
-    BASE: "{{ HPC_GROUP_PREFIX }}/{{ TMP }}"
-
   tasks:
-#  - easybuild: easyconfigs="test"
-
-#  - group: name={{ GROUP }} state=present
-
-#  - user: name=vagrant shell=/bin/bash groups=easybuild,bbmri,vagrant append=yes
 
   - name: Create user groups dir
     file: path={{ HPC_GROUP_PREFIX }} state=directory state=directory mode=0775 recurse=yes
@@ -66,37 +46,17 @@
   - name: Create user HPC_EBCONFIGS_PREFIX dir
     file: path={{ HPC_EBCONFIGS_PREFIX }} state=directory mode=0775 recurse=yes
 
-#  - name: Download Easybuild Configs
- #   get_url: url="https://github.com/molgenis/easybuild-easyconfigs/archive/{{ BBMRI_RELEASE_VERSION }}.tar.gz" dest="{{ HPC_EBCONFIGS_PREFIX }}/{{ BBMRI_RELEASE_VERSION }}.tar.gz" timeout=300
-
-
-#  - name: Download Easybuild Configs
- #   get_url:
-  #    url: 'https://github.com/molgenis/easybuild-easyconfigs/archive/2.8.7-BBMRI.tar.gz'
-   #   dest: '/home/gvandervries/BIOS/apps/software/easyconfigs/'
-    #  use_proxy: yes
-     # timeout: 1000
-
-#  - unarchive:
-#     src: https://github.com/molgenis/easybuild-easyconfigs/archive/2.8.7-BBMRI.tar.gz
-#     dest: /home/gvandervries/BIOS/apps/software/easyconfigs/
-#     remote_src: True
-
-
- # - name: extract Easybuild Configs
-  #  unarchive: 
-   #     src: "{{ HPC_EBCONFIGS_PREFIX }}/{{ BBMRI_RELEASE_VERSION }}.tar.gz" 
-    #    dest: "{{ HPC_EBCONFIGS_PREFIX }}"
-     #   remote_src: true
-
+  - name: Download Easybuild Configs
+    shell: wget https://github.com/molgenis/easybuild-easyconfigs/archive/{{ BBMRI_RELEASE_VERSION }}.tar.gz -P {{ HPC_EBCONFIGS_PREFIX }}/
+ 
   - name: extract Easybuild Configs
     command: tar x -C {{ HPC_EBCONFIGS_PREFIX }} -f {{ HPC_EBCONFIGS_PREFIX }}/{{ BBMRI_RELEASE_VERSION }}.tar.gz
 
-  - name: Download reference set
-    get_url: url="https://barmsijs.lumc.nl/bios/bios-reference-empty.tar.gz" dest="{{ REFERENCE_DIR }}/"  timeout=300
+#  - name: Download reference set
+ #   get_url: url="https://barmsijs.lumc.nl/bios/bios-reference-empty.tar.gz" dest="{{ REFERENCE_DIR }}/"  timeout=300
 
-  - name: extract reference set
-    command: tar x -C {{ REFERENCE_DIR }} -f {{ REFERENCE_DIR }}/bios-reference-empty.tar.gz
+#  - name: extract reference set
+ #   command: tar x -C {{ REFERENCE_DIR }} -f {{ REFERENCE_DIR }}/bios-reference-empty.tar.gz
 
   # Copy source files for EB to VM.
   # Download resources manually, and fix scr location if necessary
@@ -107,14 +67,12 @@
   - copy: src=~/Downloads/GenomeAnalysisTK-3.7.tar.bz2  dest={{ HPC_ENV_PREFIX }}/sources/g/GATK/  mode=0644
   - copy: src=~/Downloads/jdk-8u45-linux-x64.tar.gz  dest={{ HPC_ENV_PREFIX }}/sources/j/Java/  mode=0644
   - copy: src=~/Downloads/jdk-8u74-linux-x64.tar.gz dest={{ HPC_ENV_PREFIX }}/sources/j/Java/  mode=0644
+  - copy: src=~/Downloads/jdk-7u80-linux-x64.tar.gz dest={{ HPC_ENV_PREFIX }}/sources/j/Java/  mode=0644
   - copy: src=~/Downloads/bzip2-1.0.6.tar.gz dest={{ HPC_ENV_PREFIX }}/sources/b/bzip2/  mode=0644
   - copy: src=~/Downloads/argparse-1.2.1.tar.gz dest={{ HPC_ENV_PREFIX }}/sources/p/Python/extensions/ mode=0644
- #- copy: src=~/Downloads/.bashrc dest=/etc/skel/.bashrc owner=root group=root mode=0644  ##TODO: add blockinfile in template
 
   - name: Deploy FastQC
-    shell: source /usr/share/lmod/lmod/init/profile && source {{ HPC_ENV_PREFIX }}/modules/modules.bashrc && module load EasyBuild && eb {{ HPC_EBCONFIGS_PREFIX }}/easybuild-easyconfigs-{{ BBMRI_RELEASE_VERSION }}/easybuild/easyconfigs/f/FastQC/FastQC-0.10.1-Java-1.7.0_80.eb  --robot --robot-paths="{{ HPC_EBCONFIGS_PREFIX }}/easybuild-easyconfigs-{{ BBMRI_RELEASE_VERSION }}/easybuild/easyconfigs/:"
-#    become_user: easybuild
-#    become: true
+    shell: source {{ HPC_ENV_PREFIX }}/modules/modules.bashrc && module load EasyBuild && eb {{ HPC_EBCONFIGS_PREFIX }}/f/FastQC/FastQC-0.10.1-Java-1.7.0_80.eb --robot --robot-paths="{{ HPC_EBCONFIGS_PREFIX }}/:"
 
   - name: Deploy NGS_DNA
-    shell: source /usr/share/lmod/lmod/init/profile && source {{ HPC_ENV_PREFIX }}/modules/modules.bashrc && module load EasyBuild && eb {{ HPC_EBCONFIGS_PREFIX }}/easybuild-easyconfigs-{{ BBMRI_RELEASE_VERSION }}/easybuild/easyconfigs/n/NGS_DNA/NGS_DNA-{{ NGS_DNA_VERSION }}.eb --robot --robot-paths="{{ HPC_EBCONFIGS_PREFIX }}/easybuild-easyconfigs-{{ BBMRI_RELEASE_VERSION }}/easybuild/easyconfigs/:"
+    shell: source {{ HPC_ENV_PREFIX }}/modules/modules.bashrc && module load EasyBuild && eb {{ HPC_EBCONFIGS_PREFIX }}/n/NGS_DNA/NGS_DNA-{{ NGS_DNA_VERSION }}.eb --robot --robot-paths="{{ HPC_EBCONFIGS_PREFIX }}/:"

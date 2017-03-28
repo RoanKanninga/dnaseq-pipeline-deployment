@@ -41,7 +41,44 @@
 - name: Compile and install Lmod
   shell: export PATH={{ easybuild_software }}/Lua/{{ lua_version }}/bin:$PATH; cd {{ easybuild_source }}/l/Lmod/Lmod-{{ lmod_version }}; ./configure --prefix={{ easybuild_software }} --with-lua-include={{ easybuild_software }}/Lua/{{ lua_version }}/include --with-mpathSearch=YES --with-caseIndependentSorting=YES && make install
 
-- name: Install EasyBuild using python-pip
-  pip:
-    name: easybuild
-    virtualenv: "{{ easybuild_software }}/virtualenv"
+- name: configure lmod and easybuild
+  template: src={{ item.src }} dest={{ easybuild_modules }}/ {{ item.dest}} mode='u=rwx,g=rwx,o=r'
+  with_items:
+    - src: lmodrc.lua
+      dest: .lmod/lmodrc.lua
+    - src: modules.bashrc
+      dest: modules.bashrc
+
+#- name: auto load lmod configuration
+#  template: src=easybuild.sh dest=/etc/profile.d/z01_easybuild.sh
+
+- get_url:
+    url: https://raw.githubusercontent.com/hpcugent/easybuild-framework/develop/easybuild/scripts/bootstrap_eb.py
+    dest: '{{ easybuild_software }}/EasyBuild/{{ easybuild_version.stdout }}/bootstrap_eb.py'
+    mode: 0644
+
+- block:
+    #- name: Create the easybuild config file from the template
+    #  template: src=config.cfg.j2 dest={{ easybuild_prefix }}/config.cfg
+
+    - name: Insert lua/lmod in the path, setup easybuild modules
+      blockinfile:
+        dest: "{{ ansible_env.HOME }}/.bashrc"
+        block: |
+          export PATH={{ easybuild_software }}/Lua/{{ lua_version }}/bin:$PATH;
+          export PATH={{ easybuild_software }}/lmod/lmod/libexec:$PATH
+          source {{ easybuild_software }}/lmod/lmod/init/bash
+          module use --append {{ easybuild_prefix }}/modules/all
+        marker: "# {mark} ANSIBLE MANAGED BLOCK - lua lmod in path"
+        insertafter: EOF
+        create: yes
+
+
+# Ansible doesn't run task in a login shell, so we have to source the
+# EasyBuild config manually. We might want to create some abstraction for
+# this.
+- name: install easybuild
+  shell: . {{ easybuild_modules }}/modules.bashrc && umask 0002 && python {{ easybuild_software }}/EasyBuild/{{ easybuild_version.stdout }}/bootstrap_eb.py {{ easybuild_prefix }}
+  #&& module use {{ easybuild_prefix }}/modules/all
+#  args:
+#    creates: '{{ easybuild_software }}'
