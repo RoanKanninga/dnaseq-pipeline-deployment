@@ -51,10 +51,10 @@
     file: path={{ HPC_EBCONFIGS_PREFIX }} state=directory mode=0775 recurse=yes
 
   - name: Download Easybuild Configs
-    shell: wget https://github.com/molgenis/easybuild-easyconfigs/archive/{{ BBMRI_RELEASE_VERSION }}.tar.gz -P {{ HPC_EBCONFIGS_PREFIX }}/
+    shell: wget https://github.com/molgenis/easybuild-easyconfigs/archive/{{ BBMRI_RELEASE_VERSION }}.tar.gz -P {{ easybuild_software }}/easyconfigs
  
   - name: extract Easybuild Configs
-    command: tar x -C {{ HPC_EBCONFIGS_PREFIX }} -f {{ HPC_EBCONFIGS_PREFIX }}/{{ BBMRI_RELEASE_VERSION }}.tar.gz
+    command: tar x -C {{ easybuild_software }}/easyconfigs -f {{ easybuild_software }}/easyconfigs/{{ BBMRI_RELEASE_VERSION }}.tar.gz
 
 #  - name: Download reference set
  #   get_url: url="https://barmsijs.lumc.nl/bios/bios-reference-empty.tar.gz" dest="{{ REFERENCE_DIR }}/"  timeout=300
