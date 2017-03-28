@@ -5,7 +5,25 @@
   roles:
   - role: easybuild-install
 
+
+#  vars:
+#    NGS_DNA_VERSION: "3.3.1"
+#    ROOT: "/home/gvandervries/BBMRI"
+#    HPC_ENV_PREFIX: "{{ ROOT }}/apps"
+#    GROUP: "bbmri"
+#    DEFAULT_USER: "gvandervries"
+#    HPC_GROUP_PREFIX: "{{ ROOT }}/groups/{{ GROUP }}"
+#    BBMRI_RELEASE_VERSION: "2.8.7-BBMRI"
+#    HPC_EBCONFIGS_PREFIX: "{{ HPC_ENV_PREFIX }}/software/easyconfigs/easybuild-easyconfigs-{{ BBMRI_RELEASE_VERSION }}/easybuild/easyconfigs"
+#    REFERENCE_DIR: "{{ HPC_ENV_PREFIX }}/data/"
+#    TMP: "tmp01"
+#    BASE: "{{ HPC_GROUP_PREFIX }}/{{ TMP }}"
+
   tasks:
+
+  - name: Include default vars/main.yml
+    include_vars:
+      file: main.yml
 
   - name: Create user groups dir
     file: path={{ HPC_GROUP_PREFIX }} state=directory state=directory mode=0775 recurse=yes
