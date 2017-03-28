@@ -68,7 +68,7 @@
           export PATH={{ easybuild_software }}/Lua/{{ lua_version }}/bin:$PATH;
           export PATH={{ easybuild_software }}/lmod/lmod/libexec:$PATH
           source {{ easybuild_software }}/lmod/lmod/init/bash
-          module use --append {{ easybuild_prefix }}/modules/all
+          export MODULEPATH={{ easybuild_prefix }}/modules/all:$MODULEPATH
         marker: "# {mark} ANSIBLE MANAGED BLOCK - lua lmod in path"
         insertafter: EOF
         create: yes
