@@ -1,15 +1,14 @@
 ---
 - hosts: all
-  remote_user: gvandervries
+  #remote_user: DO NOT specify a user here. Specify login name in your ~/.ssh/config instead.
   become: no
   roles:
   - role: easybuild-install
 
   tasks:
 
-  - name: Include default vars/main.yml
-    include_vars:
-      file: main.yml
+  - name: Include default variables
+    include_vars: 'main.yml'
 
   - name: Create user groups dir
     file: path={{ HPC_GROUP_PREFIX }} state=directory state=directory mode=0775 recurse=yes
