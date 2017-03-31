@@ -30,10 +30,10 @@
 # Intermittently Ansible unarchive (ansible 2.2.1.) does not
 # recognize that the dest directory exists - have not found the cause
 - name: Uncompress LMOD
-  unarchive: src={{ easybuild_source }}/l/Lmod/{{ lmod_version }}.zip dest={{ easybuild_source }}/l/Lmod remote_src=yes
+  unarchive: src={{ easybuild_source }}/l/Lmod/{{ lmod_version }}.zip dest={{ easybuild_source }}/l/Lmod/ remote_src=yes copy=no
 
 - name: Uncompress LUA
-  unarchive: src={{ easybuild_source }}/l/Lua/lua-{{ lua_version }}.tar.gz dest={{ easybuild_source }}/l/Lua remote_src=yes
+  unarchive: src={{ easybuild_source }}/l/Lua/lua-{{ lua_version }}.tar.gz dest={{ easybuild_source }}/l/Lua/ remote_src=yes copy=no
 
 - name: Compile and install Lua
   shell: cd {{ easybuild_source }}/l/Lua/lua-{{ lua_version }}; ./configure --with-static=yes --prefix={{ easybuild_software }}/Lua/{{ lua_version }} && make && make install
