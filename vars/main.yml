@@ -1,5 +1,5 @@
 ---
-NGS_DNA_VERSION: "3.3.1"
+NGS_DNA_VERSION: "3.3.3-BBMRI"
 ROOT: "{{ ansible_env.HOME }}/BBMRI"
 HPC_ENV_PREFIX: "{{ ROOT }}/apps"
 GROUP: "bbmri"
