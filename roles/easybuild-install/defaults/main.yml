@@ -1,7 +1,9 @@
-#easybuild_prefix: "{{ lookup('env', 'HOME') }}/.local/easybuild"
-easybuild_source: "{{ easybuild_prefix }}/src"
+easybuild_prefix: "{{ ansible_env.HOME }}/BBMRI/apps/"
+easybuild_source: "{{ easybuild_prefix }}/sources"
 easybuild_modules: "{{ easybuild_prefix }}/modules"
 easybuild_software: "{{ easybuild_prefix }}/software"
+root_prefix: "{{ easybuild_prefix }}"
+env_modules_version: "3.2.10"
 lmod_version: "6.1.3"
 lua_version: "5.1.4.8"
 modules_syntax: Lua
