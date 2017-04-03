@@ -1,9 +1,7 @@
 ---
 
 - hosts: all
-  #remote_user: root
-  #become_user: root
-  #become: true
+  #remote_user: DO NOT specify a user here. Specify login name in your ~/.ssh/config instead.
   roles:
   - role: easybuild-install
 

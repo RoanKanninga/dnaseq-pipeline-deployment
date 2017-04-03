@@ -2,4 +2,6 @@
 .vagrant/
 .project
 .pydevproject
-playbook.retry
+*.retry
+*.pyc
+

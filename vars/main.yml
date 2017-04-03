@@ -1,9 +1,9 @@
 ---
 NGS_DNA_VERSION: "3.3.3-BBMRI"
-ROOT: "/home/gvandervries/BBMRI"
+ROOT: "{{ ansible_env.HOME }}/BBMRI"
 HPC_ENV_PREFIX: "{{ ROOT }}/apps"
 GROUP: "bbmri"
-DEFAULT_USER: "gvandervries"
+DEFAULT_USER: "{{ ansible_env.USER }}"
 HPC_GROUP_PREFIX: "{{ ROOT }}/groups/{{ GROUP }}"
 BBMRI_RELEASE_VERSION: "2.8.7-BBMRI"
 HPC_EBCONFIGS_PREFIX: "{{ HPC_ENV_PREFIX }}/software/easyconfigs/easybuild-easyconfigs-{{ BBMRI_RELEASE_VERSION }}/easybuild/easyconfigs/"
