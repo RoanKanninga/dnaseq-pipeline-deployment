@@ -17,20 +17,24 @@
   - "{{ easybuild_modules }}/all/EasyBuild"
   - "{{ easybuild_modules }}/tools/EasyBuild"
 
-- name: Download LMOD
-  # problems with url_get due to HTTP redirect (get connection reset error) - use wget instead
-  shell: wget https://github.com/TACC/Lmod/archive/{{ lmod_version }}.zip -P {{easybuild_source}}/l/Lmod
-
-- name: Download LUA
+- name: Download Lmod
   get_url:
-    url=http://sourceforge.net/projects/lmod/files/lua-{{ lua_version }}.tar.gz/download
-    dest={{easybuild_source}}/l/Lua
-    mode=0644
+    url: "https://github.com/TACC/Lmod/archive/{{ lmod_version }}.tar.gz"
+    dest: "{{ easybuild_source }}/l/Lmod/{{ lmod_version }}.tar.gz"
+    mode: 0644
+    checksum: 'md5:a2ea3c83f08d4175f08f84ac2a9bd508'
+
+- name: Download Lua
+  get_url:
+    url: "http://sourceforge.net/projects/lmod/files/lua-{{ lua_version }}.tar.gz/download"
+    dest: "{{ easybuild_source }}/l/Lua/lua-{{ lua_version }}.tar.gz"
+    mode: 0644
+    checksum: 'md5:c7f2818c309f052c190906576fd9dbdb'
 
 # Intermittently Ansible unarchive (ansible 2.2.1.) does not
 # recognize that the dest directory exists - have not found the cause
 - name: Uncompress LMOD
-  unarchive: src={{ easybuild_source }}/l/Lmod/{{ lmod_version }}.zip dest={{ easybuild_source }}/l/Lmod/ copy=no
+  unarchive: src={{ easybuild_source }}/l/Lmod/{{ lmod_version }}.tar.gz dest={{ easybuild_source }}/l/Lmod/ copy=no
 
 - name: Uncompress LUA
   unarchive: src={{ easybuild_source }}/l/Lua/lua-{{ lua_version }}.tar.gz dest={{ easybuild_source }}/l/Lua/ copy=no
@@ -73,10 +77,10 @@
         insertafter: EOF
         create: yes
 
-
-# Ansible doesn't run task in a login shell, so we have to source the
-# EasyBuild config manually. We might want to create some abstraction for
-# this.
+#
+# Ansible doesn't run task in a login shell, so we have to source the EasyBuild config manually.
+# We might want to create some abstraction for this.
+#
 - name: install easybuild
   shell: . {{ easybuild_modules }}/modules.bashrc && umask 0002 && python {{ easybuild_software }}/EasyBuild/{{ easybuild_version.stdout }}/bootstrap_eb.py {{ easybuild_prefix }}
   #&& module use {{ easybuild_prefix }}/modules/all
