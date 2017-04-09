@@ -28,13 +28,15 @@ try:
     import simplejson as json
 except ImportError:
     import json
+from ansible.utils.color import stringc
+from ansible import constants as AC
 
 __metaclass__ = type
 
-# Fields to reformat output for
-FIELDS = ['cmd', 'command', 'start', 'end', 'delta', 'msg', 'stdout',
-          'stderr', 'results']
-
+#
+# List of fields for which to reformat output.
+#
+FIELDS = ['cmd', 'command', 'start', 'end', 'delta', 'msg', 'stdout', 'stderr', 'results']
 
 class CallbackModule(object):
 
@@ -52,19 +54,19 @@ class CallbackModule(object):
         term_lines, term_columns = struct.unpack('hhhh', fcall)[:2]
         return term_columns
 
-    def human_log(self, data):
+    def human_log(self, data, color):
         self.term_columns = self.get_terminal_width()
         if type(data) == dict:
             for field in FIELDS:
                 no_log = data.get('_ansible_no_log')
                 if field in data.keys() and data[field] and no_log is not True:
                     output = self._format_output(data[field])
-                    print("\n{0}: {1}".format(field, output.replace("\\n", "\n")))
+                    print(str(stringc("\n{0}: {1}".format(field, output.replace("\\n", "\n")), color)))
 
     def _format_output(self, output):
-        # Strip unicode
-        if type(output) == unicode:
-            output = output.encode(sys.getdefaultencoding(), 'replace')
+        # Strip Unicode
+        #if type(output) == unicode:
+        #    output = output.encode(sys.getdefaultencoding(), 'replace')
 
         # If output is a dict
         if type(output) == dict:
@@ -111,28 +113,34 @@ class CallbackModule(object):
         pass
 
     def runner_on_failed(self, host, res, ignore_errors=False):
-        self.human_log(res)
+        self.human_log(res, AC.COLOR_ERROR)
 
     def runner_on_ok(self, host, res):
-        self.human_log(res)
+        if res.pop('changed', False):
+            self.human_log(res, AC.COLOR_CHANGED)
+        else:
+            pass
 
     def runner_on_skipped(self, host, item=None):
         pass
 
     def runner_on_unreachable(self, host, res):
-        self.human_log(res)
+        self.human_log(res, AC.COLOR_UNREACHABLE)
 
     def runner_on_no_hosts(self):
         pass
 
     def runner_on_async_poll(self, host, res, jid, clock):
-        self.human_log(res)
+        self.human_log(res, AC.COLOR_VERBOSE)
 
     def runner_on_async_ok(self, host, res, jid):
-        self.human_log(res)
+        if res.pop('changed', False):
+            self.human_log(res, AC.COLOR_CHANGED)
+        else:
+            pass
 
     def runner_on_async_failed(self, host, res, jid):
-        self.human_log(res)
+        self.human_log(res, AC.COLOR_ERROR)
 
     def playbook_on_start(self):
         pass
@@ -179,28 +187,36 @@ class CallbackModule(object):
         pass
 
     def v2_runner_on_failed(self, result, ignore_errors=False):
-        self.human_log(result._result)
+        self.human_log(result._result, AC.COLOR_ERROR)
 
     def v2_runner_on_ok(self, result):
-        self.human_log(result._result)
+        #self.human_log(result._result, AC.COLOR_OK)
+        if result._result.pop('changed', False):
+            self.human_log(result._result, AC.COLOR_CHANGED)
+        else:
+            pass
 
     def v2_runner_on_skipped(self, result):
         pass
 
     def v2_runner_on_unreachable(self, result):
-        self.human_log(result._result)
+        self.human_log(result._result, AC.COLOR_UNREACHABLE)
 
     def v2_runner_on_no_hosts(self, task):
         pass
 
     def v2_runner_on_async_poll(self, result):
-        self.human_log(result._result)
+        self.human_log(result._result, AC.COLOR_DEBUG)
 
     def v2_runner_on_async_ok(self, host, result):
-        self.human_log(result._result)
+        #self.human_log(result._result, AC.COLOR_OK)
+        if result.pop('changed', False):
+            self.human_log(result._result, AC.COLOR_CHANGED)
+        else:
+            pass
 
     def v2_runner_on_async_failed(self, result):
-        self.human_log(result._result)
+        self.human_log(result._result, AC.COLOR_ERROR)
 
     def v2_playbook_on_start(self, playbook):
         pass
