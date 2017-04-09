@@ -25,6 +25,7 @@ echo -n "Fetching available environment modules from ${HPC_ENV_PREFIX}/modules/.
 # EasyBuild env vars.
 #
 export EASYBUILD_MODULES_TOOL='Lmod'
+export EASYBUILD_MODULE_SYNTAX='Lua'
 export EASYBUILD_INSTALLPATH="${HPC_ENV_PREFIX}"
 export EASYBUILD_BUILDPATH="${HPC_ENV_PREFIX}/.tmp/easybuild/builds/"
 export EASYBUILD_SOURCEPATH="${HPC_ENV_PREFIX}/sources/"
@@ -35,7 +36,7 @@ export TEST_EASYBUILD_MODULES_TOOL='Lmod'
 #
 # Configure our module tool (Lmod).
 #
-export PATH=${HPC_ENV_PREFIX}/software/Lua/5.1.4.8/bin:$PATH;
+export PATH=${HPC_ENV_PREFIX}/software/Lua/{{ lua_version }}/bin:$PATH;
 export PATH=${HPC_ENV_PREFIX}/software/lmod/lmod/libexec:$PATH
 source ${HPC_ENV_PREFIX}/software/lmod/lmod/init/bash
 module use --append ${HPC_ENV_PREFIX}/modules/all
