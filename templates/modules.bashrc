@@ -3,10 +3,10 @@
 ### Check if we need to be sourced.
 ##
 #
-# Make sure we do not source this file for SFTP connections, 
-# which will terminate instantly when anything that is not a valid FTP command 
-# is printed on STDOUT or STDERR. 
-# For SFTP connections as well as SLURM jobs the TERM type is dumb, 
+# Make sure we do not source this file for SFTP connections,
+# which will terminate instantly when anything that is not a valid FTP command
+# is printed on STDOUT or STDERR.
+# For SFTP connections as well as SLURM jobs the TERM type is dumb,
 # but in the first case there are no SLURM related environment variables defined.
 #
 if [ ${TERM} == 'dumb' ] && [ -z ${SLURM_JOBID} ] && [ -z ${SOURCE_HPC_ENV} ]; then
@@ -25,10 +25,13 @@ echo -n "Fetching available environment modules from ${HPC_ENV_PREFIX}/modules/.
 # EasyBuild env vars.
 #
 export EASYBUILD_MODULES_TOOL='Lmod'
-#export EASYBUILD_MODULE_SYNTAX='Lua'
+export EASYBUILD_MODULE_SYNTAX='Lua'
 export EASYBUILD_INSTALLPATH="${HPC_ENV_PREFIX}"
 export EASYBUILD_BUILDPATH="${HPC_ENV_PREFIX}/.tmp/easybuild/builds/"
 export EASYBUILD_SOURCEPATH="${HPC_ENV_PREFIX}/sources/"
+export EASYBUILD_UMASK=002
+export EASYBUILD_SET_GID_BIT=1
+export EASYBUILD_STICKY_BIT=1
 export TEST_EASYBUILD_MODULES_TOOL='Lmod'
 #
 # Configure our module tool (Lmod).
