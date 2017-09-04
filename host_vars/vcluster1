@@ -1,0 +1,3 @@
+---
+# file: host_vars/vluster1
+easybuild_env_root_dir: "/exports/apps/"
