@@ -1,4 +1,3 @@
 [targets]
 
 EGI ansible_host=vcluster2
-shark ansible_host=rivershark
