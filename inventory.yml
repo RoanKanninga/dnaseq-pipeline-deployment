@@ -15,6 +15,8 @@ shark        ansible_host=rivershark
 calculon     ansible_host=calculon
 boxy         ansible_host=boxy
 leela        ansible_host=leela
+vcluster1    ansible_host=vcluster1
+vcluster2    ansible_host=vcluster2
 
 [LUMC]
 #shark        ansible_host=reshark
