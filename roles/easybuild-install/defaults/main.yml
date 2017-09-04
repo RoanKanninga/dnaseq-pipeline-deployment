@@ -1,4 +1,4 @@
-easybuild_prefix: "{{ ansible_env.HOME }}/BBMRI/apps/"
+easybuild_prefix: "/exports/apps/"
 easybuild_sources: "{{ easybuild_prefix }}/sources"
 easybuild_modules: "{{ easybuild_prefix }}/modules"
 easybuild_software: "{{ easybuild_prefix }}/software"

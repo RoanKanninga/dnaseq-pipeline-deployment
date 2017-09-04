@@ -1,0 +1,12 @@
+---
+NGS_DNA_VERSION: "3.4.2-bare"
+ROOT: "/exports"
+EGI_ENV_PREFIX: "{{ ROOT }}/apps"
+GROUP: "slurm"
+DEFAULT_USER: "{{ ansible_env.USER }}"
+EGI_GROUP_PREFIX: "{{ ROOT }}/groups/{{ GROUP }}"
+EGI_RELEASE_VERSION: "2.8.7-EGI"
+EGI_EBCONFIGS_PREFIX: "{{ EGI_ENV_PREFIX }}/software/easyconfigs/easybuild-easyconfigs-{{ EGI_RELEASE_VERSION }}/easybuild/easyconfigs/"
+REFERENCE_DIR: "{{ EGI_ENV_PREFIX }}/data/"
+TMP: "tmp01"
+BASE: "{{ EGI_GROUP_PREFIX }}/{{ TMP }}"
