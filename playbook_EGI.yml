@@ -1,0 +1,149 @@
+---
+- hosts: all
+  #remote_user: DO NOT specify a user here. Specify login name in your ~/.ssh/config instead.
+  become: no
+  pre_tasks:
+    - name: Verify Ansible version meets requirements.
+      assert:
+        that: "ansible_version.full | version_compare('2.2', '>=')"
+        msg: 'You must update Ansible to at least 2.2.x to use this playbook.'
+  roles:
+  - role: easybuild-install
+  tasks:
+
+  - name: Include default variables
+    include_vars: 'main_EGI.yml'
+  - name: Create user software dir
+    file: state=directory mode=u=rwX,g=rwX,o=rX recurse=yes path={{ EGI_ENV_PREFIX }}/software
+  - name: Create user data dir
+    file: state=directory mode=u=rwX,g=rwX,o=rX recurse=yes path={{ EGI_ENV_PREFIX }}/data
+  - name: Create user sources dir
+    file: state=directory mode=u=rwX,g=rwX,o=rX recurse=yes path={{ EGI_ENV_PREFIX }}/sources
+  - name: Create user modules dir
+    file: state=directory mode=u=rwX,g=rwX,o=rX recurse=yes path={{ EGI_ENV_PREFIX }}/modules
+  - name: Create user generatedscripts dir
+    file: state=directory mode=u=rwX,g=rwX,o=rX recurse=yes path={{ BASE }}/generatedscripts
+  - name: Create user Samplesheets dir
+    file: state=directory mode=u=rwX,g=rwX,o=rX recurse=yes path={{ BASE }}/Samplesheets
+  - name: Create user projects dir
+    file: state=directory mode=u=rwX,g=rwX,o=rX recurse=yes path={{ BASE }}/projects
+  - name: Create user logs dir
+    file: state=directory mode=u=rwX,g=rwX,o=rX recurse=yes path={{ BASE }}/logs
+  - name: Create user tmp dir
+    file: state=directory mode=u=rwX,g=rwX,o=rX recurse=yes path={{ BASE }}/tmp
+  - name: Create user EGI_EBCONFIGS_PREFIX dir
+    file: state=directory mode=u=rwX,g=rwX,o=rX recurse=yes path={{ EGI_EBCONFIGS_PREFIX }}
+  - name: Create dbSNP datadir
+    file: state=directory mode=u=rwX,g=rwX,o=rX recurse=yes path={{ REFERENCE_DIR }}/dbSNP
+  - name: Download dbSNP resources vcf index
+    get_url:
+      url: "https://molgenis26.gcc.rug.nl/downloads/NGS_DNA-resources/dbSNP/dbsnp_137.b37.vcf.idx"
+      dest: "{{ REFERENCE_DIR }}/dbSNP/dbsnp_137.b37.vcf.idx"
+  - name: Download dbSNP resources vcf
+    get_url:
+      url: "https://molgenis26.gcc.rug.nl/downloads/NGS_DNA-resources/dbSNP/dbsnp_137.b37.vcf"
+      dest: "{{ REFERENCE_DIR }}/dbSNP/dbsnp_137.b37.vcf"
+      mode: 0644
+      checksum: 'md5:956b9e21634f1315ef41a010faf291b8'
+  - name: Create Reference datadir
+    file: state=directory mode=u=rwX,g=rwX,o=rX recurse=yes path={{ REFERENCE_DIR }}/1000G/phase1/
+  - name: Download reference resources fasta
+    get_url:
+      url: "https://molgenis26.gcc.rug.nl/downloads/NGS_DNA-resources/referenceGenome/human_g1k_v37_phiX.fasta"
+      dest: "{{ REFERENCE_DIR }}/1000G/phase1/human_g1k_v37_phiX.fasta"
+      checksum: 'md5:a74fde3942bb0816f30b2f6cfe2c0ec5'
+  - name: Download reference resources dict
+    get_url:
+      url: "https://molgenis26.gcc.rug.nl/downloads/NGS_DNA-resources/referenceGenome/human_g1k_v37_phiX.dict"
+      dest: "{{ REFERENCE_DIR }}/1000G/phase1/human_g1k_v37_phiX.dict"
+  - name: Download reference resources fasta.amb
+    get_url:
+      url: "https://molgenis26.gcc.rug.nl/downloads/NGS_DNA-resources/referenceGenome/human_g1k_v37_phiX.fasta.amb"
+      dest: "{{ REFERENCE_DIR }}/1000G/phase1/human_g1k_v37_phiX.fasta.amb"
+  - name: Download reference resources fasta.ann
+    get_url:
+      url: "https://molgenis26.gcc.rug.nl/downloads/NGS_DNA-resources/referenceGenome/human_g1k_v37_phiX.fasta.ann"
+      dest: "{{ REFERENCE_DIR }}/1000G/phase1/human_g1k_v37_phiX.fasta.ann"
+  - name: Download reference resources fasta.bwt
+    get_url:
+      url: "https://molgenis26.gcc.rug.nl/downloads/NGS_DNA-resources/referenceGenome/human_g1k_v37_phiX.fasta.bwt"
+      dest: "{{ REFERENCE_DIR }}/1000G/phase1/human_g1k_v37_phiX.fasta.bwt"
+      checksum: 'md5:c0570831ca6fff13ee6157eeb1813b88'
+  - name: Download reference resources fasta.fai
+    get_url:
+      url: "https://molgenis26.gcc.rug.nl/downloads/NGS_DNA-resources/referenceGenome/human_g1k_v37_phiX.fasta.fai"
+      dest: "{{ REFERENCE_DIR }}/1000G/phase1/human_g1k_v37_phiX.fasta.fai"
+  - name: Download reference resources fasta.pac
+    get_url:
+      url: "https://molgenis26.gcc.rug.nl/downloads/NGS_DNA-resources/referenceGenome/human_g1k_v37_phiX.fasta.pac"
+      dest: "{{ REFERENCE_DIR }}/1000G/phase1/human_g1k_v37_phiX.fasta.pac"
+      checksum: 'md5:b42d311e535804ca80aa87f72a52c083'
+  - name: Download reference resources fasta.sa
+    get_url:
+      url: "https://molgenis26.gcc.rug.nl/downloads/NGS_DNA-resources/referenceGenome/human_g1k_v37_phiX.fasta.sa"
+      dest: "{{ REFERENCE_DIR }}/1000G/phase1/human_g1k_v37_phiX.fasta.sa"
+      checksum: 'md5:20e20f4d6f884f5bf81d8beafe2eb098'
+  - name: Create snpEff datadir
+    file: state=directory mode=u=rwX,g=rwX,o=rX recurse=yes path={{ REFERENCE_DIR }}/snpEff-4.3/
+  - name: Download dbSNP resources
+    get_url:
+      url: "https://molgenis26.gcc.rug.nl/downloads/NGS_DNA-resources/snpEff/hg19.tar.gz"
+      dest: "{{ REFERENCE_DIR }}/snpEff-4.3/hg19.tar.gz"
+      mode: 0644
+      checksum: 'md5:75db3b74aac7eaa3295d4278443dbb70'
+  - name: Extract SnpEff tar.gz
+    unarchive:
+      src:  "{{ REFERENCE_DIR }}/snpEff-4.3/hg19.tar.gz"
+      dest: "{{ REFERENCE_DIR }}/snpEff-4.3/"
+      remote_src: yes
+  - name: Create inSilico datadir
+    file: state=directory mode=u=rwX,g=rwX,o=rX recurse=yes path={{ REFERENCE_DIR }}/inSilico/
+  - name: Download inSilico resources
+    get_url:
+      url: "https://molgenis26.gcc.rug.nl/downloads/NGS_DNA-resources/inSilico.tar.gz"
+      dest: "{{ REFERENCE_DIR }}/inSilico/inSilico.tar.gz"
+  - name: Extract inSilico tar.gz
+    unarchive:
+      src:  "{{ REFERENCE_DIR }}/inSilico/inSilico.tar.gz"
+      dest: "{{ REFERENCE_DIR }}"
+      remote_src: yes
+  - name: Create Agilent datadir
+    file: state=directory mode=u=rwX,g=rwX,o=rX recurse=yes path={{ REFERENCE_DIR }}/Agilent/
+  - name: Download Agilent resources
+    get_url:
+      url: "https://molgenis26.gcc.rug.nl/downloads/NGS_DNA-resources/Agilent.tar.gz"
+      dest: "{{ REFERENCE_DIR }}/Agilent/Agilent.tar.gz"
+  - name: Extract inSilico tar.gz
+    unarchive:
+      src:  "{{ REFERENCE_DIR }}/Agilent/Agilent.tar.gz"
+      dest: "{{ REFERENCE_DIR }}/Agilent/"
+      remote_src: yes
+  - name: Download Easybuild Configs
+    get_url:
+      url: "https://github.com/molgenis/easybuild-easyconfigs/releases/download/2.8.7-EGI/easybuild-easyconfigs-2.8.7-EGI-custom.tar.gz"
+      dest: "{{ easybuild_software }}/easyconfigs/{{ EGI_RELEASE_VERSION }}-custom.tar.gz"
+      mode: 0644
+      checksum: 'md5:259b8b100ceecdc434a2ecb2516556f4'
+  - name: Extract Easybuild Configs
+    unarchive:
+      src:  "{{ easybuild_software }}/easyconfigs/{{ EGI_RELEASE_VERSION }}-custom.tar.gz"
+      dest: "{{ easybuild_software }}/easyconfigs"
+      remote_src: yes
+  #
+  # Copy sources for software packages for which the sources cannot be downloaded automagically by EB for technical or legal reasons.
+  #
+  - copy: mode=0644 src=~/Downloads/EasybuildFilesForNGS/gmp-6.0.0a.tar.bz2            dest={{ EGI_ENV_PREFIX }}/sources/g/GCC/
+  - copy: mode=0644 src=~/Downloads/EasybuildFilesForNGS/mpc-1.0.2.tar.gz              dest={{ EGI_ENV_PREFIX }}/sources/g/GCC/
+  - copy: mode=0644 src=~/Downloads/EasybuildFilesForNGS/gcc-4.9.3.tar.bz2             dest={{ EGI_ENV_PREFIX }}/sources/g/GCC/
+  - copy: mode=0644 src=~/Downloads/EasybuildFilesForNGS/mpfr-3.1.2.tar.gz             dest={{ EGI_ENV_PREFIX }}/sources/g/GCC/
+  - copy: mode=0644 src=~/Downloads/EasybuildFilesForNGS/GenomeAnalysisTK-3.7.tar.bz2  dest={{ EGI_ENV_PREFIX }}/sources/g/GATK/
+  - copy: mode=0644 src=~/Downloads/EasybuildFilesForNGS/jdk-8u45-linux-x64.tar.gz     dest={{ EGI_ENV_PREFIX }}/sources/j/Java/
+  - copy: mode=0644 src=~/Downloads/EasybuildFilesForNGS/jdk-8u74-linux-x64.tar.gz     dest={{ EGI_ENV_PREFIX }}/sources/j/Java/
+  - copy: mode=0644 src=~/Downloads/EasybuildFilesForNGS/jdk-7u80-linux-x64.tar.gz     dest={{ EGI_ENV_PREFIX }}/sources/j/Java/
+  - copy: mode=0644 src=~/Downloads/EasybuildFilesForNGS/bzip2-1.0.6.tar.gz            dest={{ EGI_ENV_PREFIX }}/sources/b/bzip2/
+  - copy: mode=0644 src=~/Downloads/EasybuildFilesForNGS/argparse-1.2.1.tar.gz         dest={{ EGI_ENV_PREFIX }}/sources/p/Python/extensions/
+  #
+  # Deploy with EasyBuild
+  #
+  - name: Deploy NGS_DNA
+    shell: source {{ EGI_ENV_PREFIX }}/modules/modules.bashrc && module load EasyBuild && eb {{ EGI_EBCONFIGS_PREFIX }}/n/NGS_DNA/NGS_DNA-{{ NGS_DNA_VERSION }}.eb --robot --robot-paths="{{ EGI_EBCONFIGS_PREFIX }}/:"
