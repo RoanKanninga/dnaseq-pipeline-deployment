@@ -3,14 +3,10 @@
 #  A. Always prefix variables names with the role name to prevent vairable name collisions.
 #  B. User lowercase underscore separated names.
 #
-
-#easybuild_env_root_dir: "{{ ansible_env.HOME }}/BBMRI/apps/"
-easybuild_env_root_dir: "/apps/"
+easybuild_env_root_dir: "/apps/" # default when not overruled by a site specific file in the host_vars sub dir.
 easybuild_sources_dir: "{{ easybuild_env_root_dir }}/sources/"
 easybuild_modules_dir: "{{ easybuild_env_root_dir }}/modules/"
 easybuild_software_dir: "{{ easybuild_env_root_dir }}/software/"
 easybuild_modules_syntax: Lua
 easybuild_lmod_version: "6.1.3"
 easybuild_lua_version: "5.1.4.9"
-#easybuild_lua_dir: "{{ easybuild_env_root_dir }}/software/Lua/{{ easybuild_lua_version }}/"
-#easybuild_lmod_dir: "{{ easybuild_env_root_dir }}/software/"

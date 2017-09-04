@@ -1,0 +1,67 @@
+---
+- hosts: all
+  #remote_user: DO NOT specify a user here. Specify login name in your ~/.ssh/config instead.
+  become: no
+  pre_tasks:
+    - name: Verify Ansible version meets requirements.
+      assert:
+        that: "ansible_version.full | version_compare('2.2', '>=')"
+        msg: 'You must update Ansible to at least 2.2.x to use this playbook.'
+  roles:
+  - role: easybuild-install
+  tasks:
+  - name: Include default variables
+    include_vars: 'main.yml'
+  - name: Create user groups dir
+    file: state=directory mode=u=rwX,g=rwX,o=rX recurse=yes path={{ EGI_GROUP_PREFIX }}
+  - name: Create user software dir
+    file: state=directory mode=u=rwX,g=rwX,o=rX recurse=yes path={{ EGI_ENV_PREFIX }}/software
+  - name: Create user data dir
+    file: state=directory mode=u=rwX,g=rwX,o=rX recurse=yes path={{ EGI_ENV_PREFIX }}/data
+  - name: Create user sources dir
+    file: state=directory mode=u=rwX,g=rwX,o=rX recurse=yes path={{ EGI_ENV_PREFIX }}/sources
+  - name: Create user modules dir
+    file: state=directory mode=u=rwX,g=rwX,o=rX recurse=yes path={{ EGI_ENV_PREFIX }}/modules
+  - name: Create user generatedscripts dir
+    file: state=directory mode=u=rwX,g=rwX,o=rX recurse=yes path={{ BASE }}/generatedscripts
+  - name: Create user Samplesheets dir
+    file: state=directory mode=u=rwX,g=rwX,o=rX recurse=yes path={{ BASE }}/Samplesheets
+  - name: Create user projects dir
+    file: state=directory mode=u=rwX,g=rwX,o=rX recurse=yes path={{ BASE }}/projects
+  - name: Create user logs dir
+    file: state=directory mode=u=rwX,g=rwX,o=rX recurse=yes path={{ BASE }}/logs
+  - name: Create user tmp dir
+    file: state=directory mode=u=rwX,g=rwX,o=rX recurse=yes path={{ BASE }}/tmp
+  - name: Create user HPC_EBCONFIGS_PREFIX dir
+    file: state=directory mode=u=rwX,g=rwX,o=rX recurse=yes path={{ HPC_EBCONFIGS_PREFIX }}
+  - name: Download Easybuild Configs
+    get_url:
+      url: "https://github.com/molgenis/easybuild-easyconfigs/archive/{{ BBMRI_RELEASE_VERSION }}.tar.gz"
+      dest: "{{ easybuild_software }}/easyconfigs/{{ BBMRI_RELEASE_VERSION }}.tar.gz"
+      mode: 0644
+      checksum: 'md5:3407446f413a31239c51fe3d494ebee7'
+  - name: Extract Easybuild Configs
+    unarchive:
+      src:  "{{ easybuild_software }}/easyconfigs/{{ BBMRI_RELEASE_VERSION }}.tar.gz"
+      dest: "{{ easybuild_software }}/easyconfigs"
+      remote_src: yes
+  #
+  # Copy sources for software packages for which the sources cannot be downloaded automagically by EB for technical or legal reasons.
+  #
+  - copy: mode=0644 src=~/Downloads/EasybuildFilesForNGS/gmp-6.0.0a.tar.bz2            dest={{ EGI_ENV_PREFIX }}/sources/g/GCC/
+  - copy: mode=0644 src=~/Downloads/EasybuildFilesForNGS/mpc-1.0.2.tar.gz              dest={{ EGI_ENV_PREFIX }}/sources/g/GCC/
+  - copy: mode=0644 src=~/Downloads/EasybuildFilesForNGS/gcc-4.9.3.tar.bz2             dest={{ EGI_ENV_PREFIX }}/sources/g/GCC/
+  - copy: mode=0644 src=~/Downloads/EasybuildFilesForNGS/mpfr-3.1.2.tar.gz             dest={{ EGI_ENV_PREFIX }}/sources/g/GCC/
+  - copy: mode=0644 src=~/Downloads/EasybuildFilesForNGS/GenomeAnalysisTK-3.7.tar.bz2  dest={{ EGI_ENV_PREFIX }}/sources/g/GATK/
+  - copy: mode=0644 src=~/Downloads/EasybuildFilesForNGS/jdk-8u45-linux-x64.tar.gz     dest={{ EGI_ENV_PREFIX }}/sources/j/Java/
+  - copy: mode=0644 src=~/Downloads/EasybuildFilesForNGS/jdk-8u74-linux-x64.tar.gz     dest={{ EGI_ENV_PREFIX }}/sources/j/Java/
+  - copy: mode=0644 src=~/Downloads/EasybuildFilesForNGS/jdk-7u80-linux-x64.tar.gz     dest={{ EGI_ENV_PREFIX }}/sources/j/Java/
+  - copy: mode=0644 src=~/Downloads/EasybuildFilesForNGS/bzip2-1.0.6.tar.gz            dest={{ EGI_ENV_PREFIX }}/sources/b/bzip2/
+  - copy: mode=0644 src=~/Downloads/EasybuildFilesForNGS/argparse-1.2.1.tar.gz         dest={{ EGI_ENV_PREFIX }}/sources/p/Python/extensions/
+  #
+  # Deploy with EasyBuild
+  #
+  - name: Deploy FastQC
+    shell: source {{ EGI_ENV_PREFIX }}/modules/modules.bashrc && module load EasyBuild && eb {{ HPC_EBCONFIGS_PREFIX }}/f/FastQC/FastQC-0.10.1-Java-1.7.0_80.eb --robot --robot-paths="{{ HPC_EBCONFIGS_PREFIX }}/:"
+  - name: Deploy NGS_DNA
+    shell: source {{ EGI_ENV_PREFIX }}/modules/modules.bashrc && module load EasyBuild && eb {{ HPC_EBCONFIGS_PREFIX }}/n/NGS_DNA/NGS_DNA-{{ NGS_DNA_VERSION }}.eb --robot --robot-paths="{{ HPC_EBCONFIGS_PREFIX }}/:"
