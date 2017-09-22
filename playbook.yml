@@ -5,17 +5,6 @@
   roles:
   - role: easybuild-install
 
-  vars:
-    NGS_DNA_VERSION: "3.3.1"
-    #HPC_ENV_PREFIX: "/apps"
-    GROUP: "bbmri"
-    #DEFAULT_USER: "vagrant"
-    #HPC_GROUP_PREFIX: "/groups/{{ GROUP }}"
-    HPC_EBCONFIGS_PREFIX: "{{ HPC_ENV_PREFIX }}/software/easyconfigs"
-    BBMRI_RELEASE_VERSION: "2.8.6-BBMRI"
-    TMP: "tmp01"
-    BASE: "{{ HPC_GROUP_PREFIX }}/{{ TMP }}"
-
   tasks:
   #- easybuild: easyconfigs="test"
 
@@ -39,40 +28,33 @@
 #    file: path={{ reference_dir }} state=directory mode=0775 recurse=yes
 
   - name: Create user generatedscripts dir
-    file: path={{ BASE }}/generatedscripts state=directory mode=0775 recurse=yes
+    file: path={{ pb_base }}/generatedscripts state=directory mode=0775 recurse=yes
 
   - name: Create user Samplesheets dir
-    file: path={{ BASE }}/Samplesheets state=directory mode=0775 recurse=yes
+    file: path={{ pb_base }}/Samplesheets state=directory mode=0775 recurse=yes
 
   - name: Create user projects dir
-    file: path={{ BASE }}/projects state=directory mode=0775 recurse=yes
+    file: path={{ pb_base }}/projects state=directory mode=0775 recurse=yes
 
   - name: Create user logs dir
-    file: path={{ BASE }}/logs state=directory mode=0775 recurse=yes
+    file: path={{ pb_base }}/logs state=directory mode=0775 recurse=yes
 
   - name: Create user tmp dir
-    file: path={{ BASE }}/tmp state=directory mode=0775 recurse=yes
+    file: path={{ pb_base }}/tmp state=directory mode=0775 recurse=yes
 
-  - name: Create user HPC_EBCONFIGS_PREFIX dir
-    file: path={{ HPC_EBCONFIGS_PREFIX }} state=directory mode=0775 recurse=yes
+  - name: Create user pb_ebconfigs_prefix dir
+    file: path={{ pb_ebconfigs_prefix }} state=directory mode=0775 recurse=yes
 
   - name: Download Easybuild Configs
-    get_url: url="https://github.com/molgenis/easybuild-easyconfigs/archive/{{ BBMRI_RELEASE_VERSION }}.tar.gz" dest="{{ HPC_EBCONFIGS_PREFIX }}/{{ BBMRI_RELEASE_VERSION }}.tar.gz" timeout=300
-
-  - name: extract Easybuild Configs
+    get_url:
+      url: "https://github.com/molgenis/easybuild-easyconfigs/releases/download/{{ pb_ebconfigs_version }}/easybuild-easyconfigs-{{ pb_ebconfigs_version }}.tar.gz"
+      dest: "{{ easybuild_sources_dir }}/easyconfigs/{{ pb_ebconfigs_version }}.tar.gz"
+      mode: 0644
+  - name: Extract Easybuild Configs
     unarchive:
-        src: "{{ HPC_EBCONFIGS_PREFIX }}/{{ BBMRI_RELEASE_VERSION }}.tar.gz"
-        dest: "{{ HPC_EBCONFIGS_PREFIX }}"
-        remote_src: yes
-
-#  - name: Dirty unarchive
-#    command: tar x -C {{ HPC_EBCONFIGS_PREFIX }} -f {{ HPC_EBCONFIGS_PREFIX }}/{{ BBMRI_RELEASE_VERSION }}.tar.gz
-
-#  - name: Download reference set
-#    get_url: url="https://barmsijs.lumc.nl/bios/bios-reference-empty.tar.gz" dest="{{ reference_dir }}/bios-reference.tar.gz" mode=0775 timeout=300
-
-#  - name: extract reference set
-#    command: tar x -C {{ reference_dir }} -f {{ reference_dir }}/bios-reference.tar.gz
+      src:  "{{ easybuild_sources_dir }}/easyconfigs/{{ pb_ebconfigs_version }}-custom.tar.gz"
+      dest: "{{ easybuild_software_dir }}/easyconfigs"
+      remote_src: yes
 
   # Copy source files for EB to VM.
   # Download resources manually, and fix scr location if necessary
@@ -87,9 +69,9 @@
  #- copy: src=~/Downloads/.bashrc dest=/etc/skel/.bashrc owner=root group=root mode=0644  ##TODO: add blockinfile in template
 
 #  - name: Deploy FastQC
-#    shell: source /usr/share/lmod/lmod/init/profile && source {{ HPC_ENV_PREFIX }}/modules/modules.bashrc && module load EasyBuild && eb {{ HPC_EBCONFIGS_PREFIX }}/easybuild-easyconfigs-{{ BBMRI_RELEASE_VERSION }}/easybuild/easyconfigs/f/FastQC/FastQC-0.10.1-Java-1.7.0_80.eb  --robot --robot-paths="{{ HPC_EBCONFIGS_PREFIX }}/easybuild-easyconfigs-{{ BBMRI_RELEASE_VERSION }}/easybuild/easyconfigs/:"
+#    shell: source /usr/share/lmod/lmod/init/profile && source {{ HPC_ENV_PREFIX }}/modules/modules.bashrc && module load EasyBuild && eb {{ pb_ebconfigs_prefix }}/easybuild-easyconfigs-{{ pb_ebconfigs_version }}/easybuild/easyconfigs/f/FastQC/FastQC-0.10.1-Java-1.7.0_80.eb  --robot --robot-paths="{{ pb_ebconfigs_prefix }}/easybuild-easyconfigs-{{ pb_ebconfigs_version }}/easybuild/easyconfigs/:"
 #    become_user: easybuild
 #    become: true
 
   - name: Deploy NGS_DNA
-    shell: source {{ lmod_prefix }}/init/profile && source {{ HPC_ENV_PREFIX }}/modules/modules.bashrc && module load EasyBuild && eb {{ HPC_EBCONFIGS_PREFIX }}/easybuild-easyconfigs-{{ BBMRI_RELEASE_VERSION }}/easybuild/easyconfigs/n/NGS_DNA/NGS_DNA-{{ NGS_DNA_VERSION }}.eb --robot --robot-paths="{{ HPC_EBCONFIGS_PREFIX }}/easybuild-easyconfigs-{{ BBMRI_RELEASE_VERSION }}/easybuild/easyconfigs/:"
+    shell: source {{ lmod_prefix }}/init/profile && source {{ HPC_ENV_PREFIX }}/modules/modules.bashrc && module load EasyBuild && eb {{ pb_ebconfigs_prefix }}/easybuild-easyconfigs-{{ pb_ebconfigs_version }}/easybuild/easyconfigs/n/NGS_DNA/NGS_DNA-{{ pb_ngs_dna_version }}.eb --robot --robot-paths="{{ pb_ebconfigs_prefix }}/easybuild-easyconfigs-{{ pb_ebconfigs_version }}/easybuild/easyconfigs/:"
