@@ -14,11 +14,9 @@
     reference_dir: "/apps/data/bios/Biopet/BIOS-{{ BIOSVERSION }}/"
     GROUP: "bbmri"
     DEFAULT_USER: "vagrant"
-    HPC_GROUP_PREFIX: "/groups/{{ GROUP }}"
-    HPC_EBCONFIGS_PREFIX: "/apps/software/easyconfigs"
-    BBMRI_RELEASE_VERSION: "2.8.6-BBMRI"
-    TMP: "tmp01"
-    BASE: "{{ HPC_GROUP_PREFIX }}/{{ TMP }}"
+    pb_ebconfigs_version: "2.8.6-BBMRI"
+    pb_tmp_lfs: "tmp01"
+    pb_base: "{{ HPC_GROUP_PREFIX }}/{{ pb_tmp_lfs }}"
 
   environment:
     BIOPET_CONFIG: '{{ biopet_dir }}/biopet-bios-config.yml'
@@ -30,44 +28,46 @@
 
   - user: name=vagrant shell=/bin/bash groups=easybuild,bbmri,vagrant append=yes
 
-  - name: Create user groups dir
+  - name: Create groups dir
     file: path={{ HPC_GROUP_PREFIX }} state=directory state=directory owner={{ DEFAULT_USER }} group=vagrant mode=0775 recurse=yes
-  
-  - name: Create user groups dir
-    file: path={{ HPC_GROUP_PREFIX }} state=directory state=directory owner=easybuild group=easybuild mode=0775 recurse=yes  
 
-  - name: Create user software dir
+  - name: Create software dir
     file: path={{ HPC_ENV_PREFIX }}/software state=directory owner=easybuild group=easybuild mode=0775 recurse=yes
 
-  - name: Create user data dir
+  - name: Create data dir
     file: path={{ HPC_ENV_PREFIX }}/data state=directory owner=easybuild group=easybuild mode=0775 recurse=yes
 
-  - name: Create user reference_dir dir
+  - name: Create reference_dir dir
     file: path={{ reference_dir }} state=directory owner=easybuild group=easybuild mode=0775 recurse=yes
 
-  - name: Create user generatedscripts dir
-    file: path={{ BASE }}/generatedscripts state=directory owner={{ DEFAULT_USER }} group={{ GROUP }} mode=0775 recurse=yes
+  - name: Create generatedscripts dir
+    file: path={{ pb_base }}/generatedscripts state=directory owner={{ DEFAULT_USER }} group={{ GROUP }} mode=0775 recurse=yes
 
-  - name: Create user Samplesheets dir
-    file: path={{ BASE }}/Samplesheets state=directory owner={{ DEFAULT_USER }} group={{ GROUP }} mode=0775 recurse=yes
+  - name: Create Samplesheets dir
+    file: path={{ pb_base }}/Samplesheets state=directory owner={{ DEFAULT_USER }} group={{ GROUP }} mode=0775 recurse=yes
 
-  - name: Create user projects dir
-    file: path={{ BASE }}/projects state=directory owner={{ DEFAULT_USER }} group={{ GROUP }} mode=0775 recurse=yes
+  - name: Create projects dir
+    file: path={{ pb_base }}/projects state=directory owner={{ DEFAULT_USER }} group={{ GROUP }} mode=0775 recurse=yes
 
-  - name: Create user logs dir
-    file: path={{ BASE }}/logs state=directory owner={{ DEFAULT_USER }} group={{ GROUP }} mode=0775 recurse=yes
+  - name: Create logs dir
+    file: path={{ pb_base }}/logs state=directory owner={{ DEFAULT_USER }} group={{ GROUP }} mode=0775 recurse=yes
 
-  - name: Create user tmp dir
-    file: path={{ BASE }}/tmp state=directory owner={{ DEFAULT_USER }} group={{ GROUP }} mode=0775 recurse=yes
+  - name: Create tmp dir
+    file: path={{ pb_base }}/tmp state=directory owner={{ DEFAULT_USER }} group={{ GROUP }} mode=0775 recurse=yes
 
-  - name: Create user HPC_EBCONFIGS_PREFIX dir
-    file: path={{ HPC_EBCONFIGS_PREFIX }} state=directory owner=easybuild group=easybuild mode=0775 recurse=yes
+  - name: Create pb_ebconfigs_prefix dir
+    file: path={{ pb_ebconfigs_prefix }} state=directory owner=easybuild group=easybuild mode=0775 recurse=yes
 
   - name: Download Easybuild Configs
-    get_url: url="https://github.com/molgenis/easybuild-easyconfigs/archive/{{ BBMRI_RELEASE_VERSION }}.tar.gz" dest="{{ HPC_EBCONFIGS_PREFIX }}/{{ BBMRI_RELEASE_VERSION }}.tar.gz" timeout=300
-
-  - name: extract Easybuild Configs
-    command: tar x -C {{ HPC_EBCONFIGS_PREFIX }} -f {{ HPC_EBCONFIGS_PREFIX }}/{{ BBMRI_RELEASE_VERSION }}.tar.gz
+    get_url:
+      url: "https://github.com/molgenis/easybuild-easyconfigs/releases/download/{{ pb_ebconfigs_version }}/easybuild-easyconfigs-{{ pb_ebconfigs_version }}.tar.gz"
+      dest: "{{ easybuild_sources_dir }}/easyconfigs/{{ pb_ebconfigs_version }}.tar.gz"
+      mode: 0644
+  - name: Extract Easybuild Configs
+    unarchive:
+      src:  "{{ easybuild_sources_dir }}/easyconfigs/{{ pb_ebconfigs_version }}.tar.gz"
+      dest: "{{ easybuild_software_dir }}/easyconfigs"
+      remote_src: yes
 
   - name: Download reference set
     get_url: url="https://barmsijs.lumc.nl/bios/bios-reference-empty.tar.gz" dest="{{ reference_dir }}/bios-reference.tar.gz" owner=easybuild group=easybuild mode=0775 timeout=300
@@ -94,16 +94,16 @@
  #- copy: src=~/Downloads/.bashrc dest=/etc/skel/.bashrc owner=root group=root mode=0644  ##TODO: add blockinfile in template
 
 #  - name: Deploy FastQC
-#    shell: source /usr/share/lmod/lmod/init/profile && source {{ HPC_ENV_PREFIX }}/modules/modules.bashrc && module load EasyBuild && eb {{ HPC_EBCONFIGS_PREFIX }}/easybuild-easyconfigs-{{ BBMRI_RELEASE_VERSION }}/easybuild/easyconfigs/f/FastQC/FastQC-0.10.1-Java-1.7.0_80.eb  --robot --robot-paths="{{ HPC_EBCONFIGS_PREFIX }}/easybuild-easyconfigs-{{ BBMRI_RELEASE_VERSION }}/easybuild/easyconfigs/:"
+#    shell: source /usr/share/lmod/lmod/init/profile && source {{ HPC_ENV_PREFIX }}/modules/modules.bashrc && module load EasyBuild && eb {{ pb_ebconfigs_prefix }}/easybuild-easyconfigs-{{ pb_ebconfigs_version }}/easybuild/easyconfigs/f/FastQC/FastQC-0.10.1-Java-1.7.0_80.eb  --robot --robot-paths="{{ pb_ebconfigs_prefix }}/easybuild-easyconfigs-{{ pb_ebconfigs_version }}/easybuild/easyconfigs/:"
 #    become_user: easybuild
 #    become: true
 
   - name: Deploy Biopet
-    shell: source /usr/share/lmod/lmod/init/profile && source {{ HPC_ENV_PREFIX }}/modules/modules.bashrc && module load EasyBuild && eb {{ HPC_EBCONFIGS_PREFIX }}/easybuild-easyconfigs-{{ BBMRI_RELEASE_VERSION }}/easybuild/easyconfigs/b/Biopet/Biopet-BIOS-86e77e81.eb --robot --robot-paths="{{ HPC_EBCONFIGS_PREFIX }}/easybuild-easyconfigs-{{ BBMRI_RELEASE_VERSION }}/easybuild/easyconfigs/:"
-    become_user: easybuild																
+    shell: source /usr/share/lmod/lmod/init/profile && source {{ HPC_ENV_PREFIX }}/modules/modules.bashrc && module load EasyBuild && eb {{ pb_ebconfigs_prefix }}/easybuild-easyconfigs-{{ pb_ebconfigs_version }}/easybuild/easyconfigs/b/Biopet/Biopet-BIOS-86e77e81.eb --robot --robot-paths="{{ pb_ebconfigs_prefix }}/easybuild-easyconfigs-{{ pb_ebconfigs_version }}/easybuild/easyconfigs/:"
+    become_user: easybuild
     become: true
 
   - name: Deploy NGS_RNA
-    shell: source /usr/share/lmod/lmod/init/profile && source {{ HPC_ENV_PREFIX }}/modules/modules.bashrc && module load EasyBuild && eb {{ HPC_EBCONFIGS_PREFIX }}/easybuild-easyconfigs-{{ BBMRI_RELEASE_VERSION }}/easybuild/easyconfigs/n/NGS_RNA/NGS_RNA-3.2.3.eb --robot --robot-paths="{{ HPC_EBCONFIGS_PREFIX }}/easybuild-easyconfigs-{{ BBMRI_RELEASE_VERSION }}/easybuild/easyconfigs/:"
+    shell: source /usr/share/lmod/lmod/init/profile && source {{ HPC_ENV_PREFIX }}/modules/modules.bashrc && module load EasyBuild && eb {{ pb_ebconfigs_prefix }}/easybuild-easyconfigs-{{ pb_ebconfigs_version }}/easybuild/easyconfigs/n/NGS_RNA/NGS_RNA-3.2.3.eb --robot --robot-paths="{{ pb_ebconfigs_prefix }}/easybuild-easyconfigs-{{ pb_ebconfigs_version }}/easybuild/easyconfigs/:"
     become_user: easybuild
     become: true

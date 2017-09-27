@@ -1,4 +1,0 @@
-HPC_ENV_PREFIX: /exports/sasc/gonl/eb-test/apps
-HPC_GROUP_PREFIX: /exports/sasc/gonl/eb-test/groups
-EGI_ENV_PREFIX:/export/apps
-EGI_GROUP_PREFIX:/export/groups
