@@ -17,6 +17,7 @@ boxy         ansible_host=boxy
 leela        ansible_host=leela
 vcluster1    ansible_host=vcluster1
 vcluster2    ansible_host=vcluster2
+boxy_dev     ansible_host=boxy
 
 [LUMC]
 #shark        ansible_host=reshark
@@ -36,6 +37,7 @@ vcluster2    ansible_host=vcluster2
 leela        ansible_host=leela
 vcluster1    ansible_host=vcluster1
 vcluster2    ansible_host=vcluster2
+boxy_dev     ansible_host=boxy
 
 [production]
 shark        ansible_host=rivershark
