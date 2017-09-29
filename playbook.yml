@@ -31,43 +31,43 @@
   - name: Download reference data
     get_url: url="{{ item.url }}" dest="{{ item.dest }}" checksum="{{ item.checksum }}" mode="{{ MODE_FILES_REGULAR }}"
     with_items:
-      - url: 'https://molgenis26.gcc.rug.nl/downloads/NGS_DNA-resources/dbSNP/dbsnp_137.b37.vcf.idx'
+      - url: "{{ pb_remote_sources_dir }}/NGS_DNA-resources/dbSNP/dbsnp_137.b37.vcf.idx"
         dest: "{{ HPC_ENV_PREFIX }}/data/dbSNP/dbsnp_137.b37.vcf.idx"
         checksum: 'md5:80a7ce491b9ca192bfdab55d6b759e2e'
-      - url: 'https://molgenis26.gcc.rug.nl/downloads/NGS_DNA-resources/dbSNP/dbsnp_137.b37.vcf'
+      - url: "{{ pb_remote_sources_dir }}/NGS_DNA-resources/dbSNP/dbsnp_137.b37.vcf"
         dest: "{{ HPC_ENV_PREFIX }}/data/dbSNP/dbsnp_137.b37.vcf"
         checksum: 'md5:956b9e21634f1315ef41a010faf291b8'
-      - url: "https://molgenis26.gcc.rug.nl/downloads/NGS_DNA-resources/referenceGenome/human_g1k_v37_phiX.fasta"
+      - url: "{{ pb_remote_sources_dir }}/NGS_DNA-resources/referenceGenome/human_g1k_v37_phiX.fasta"
         dest: "{{ HPC_ENV_PREFIX }}/data/1000G/phase1/human_g1k_v37_phiX.fasta"
         checksum: 'md5:a74fde3942bb0816f30b2f6cfe2c0ec5'
-      - url: "https://molgenis26.gcc.rug.nl/downloads/NGS_DNA-resources/referenceGenome/human_g1k_v37_phiX.dict"
+      - url: "{{ pb_remote_sources_dir }}/NGS_DNA-resources/referenceGenome/human_g1k_v37_phiX.dict"
         dest: "{{ HPC_ENV_PREFIX }}/data/1000G/phase1/human_g1k_v37_phiX.dict"
         checksum: 'md5:bbfeb6a82dede252a0fc6dde9485d2d2'
-      - url: "https://molgenis26.gcc.rug.nl/downloads/NGS_DNA-resources/referenceGenome/human_g1k_v37_phiX.fasta.amb"
+      - url: "{{ pb_remote_sources_dir }}/NGS_DNA-resources/referenceGenome/human_g1k_v37_phiX.fasta.amb"
         dest: "{{ HPC_ENV_PREFIX }}/data/1000G/phase1/human_g1k_v37_phiX.fasta.amb"
         checksum: 'md5:7558698df27f62bc0ed971664e8089a4'
-      - url: "https://molgenis26.gcc.rug.nl/downloads/NGS_DNA-resources/referenceGenome/human_g1k_v37_phiX.fasta.ann"
+      - url: "{{ pb_remote_sources_dir }}/NGS_DNA-resources/referenceGenome/human_g1k_v37_phiX.fasta.ann"
         dest: "{{ HPC_ENV_PREFIX }}/data/1000G/phase1/human_g1k_v37_phiX.fasta.ann"
         checksum: 'md5:e858be5e40ee30ba8c0f584395188c0e'
-      - url: "https://molgenis26.gcc.rug.nl/downloads/NGS_DNA-resources/referenceGenome/human_g1k_v37_phiX.fasta.bwt"
+      - url: "{{ pb_remote_sources_dir }}/NGS_DNA-resources/referenceGenome/human_g1k_v37_phiX.fasta.bwt"
         dest: "{{ HPC_ENV_PREFIX }}/data/1000G/phase1/human_g1k_v37_phiX.fasta.bwt"
         checksum: 'md5:c0570831ca6fff13ee6157eeb1813b88'
-      - url: "https://molgenis26.gcc.rug.nl/downloads/NGS_DNA-resources/referenceGenome/human_g1k_v37_phiX.fasta.fai"
+      - url: "{{ pb_remote_sources_dir }}/NGS_DNA-resources/referenceGenome/human_g1k_v37_phiX.fasta.fai"
         dest: "{{ HPC_ENV_PREFIX }}/data/1000G/phase1/human_g1k_v37_phiX.fasta.fai"
         checksum: 'md5:2bc786e8a1f6b71ba75c3368c2e50b19'
-      - url: "https://molgenis26.gcc.rug.nl/downloads/NGS_DNA-resources/referenceGenome/human_g1k_v37_phiX.fasta.pac"
+      - url: "{{ pb_remote_sources_dir }}/NGS_DNA-resources/referenceGenome/human_g1k_v37_phiX.fasta.pac"
         dest: "{{ HPC_ENV_PREFIX }}/data/1000G/phase1/human_g1k_v37_phiX.fasta.pac"
         checksum: 'md5:b42d311e535804ca80aa87f72a52c083'
-      - url: "https://molgenis26.gcc.rug.nl/downloads/NGS_DNA-resources/referenceGenome/human_g1k_v37_phiX.fasta.sa"
+      - url: "{{ pb_remote_sources_dir }}/NGS_DNA-resources/referenceGenome/human_g1k_v37_phiX.fasta.sa"
         dest: "{{ HPC_ENV_PREFIX }}/data/1000G/phase1/human_g1k_v37_phiX.fasta.sa"
         checksum: 'md5:20e20f4d6f884f5bf81d8beafe2eb098'
-      - url: "https://molgenis26.gcc.rug.nl/downloads/NGS_DNA-resources/snpEff/hg19.tar.gz"
+      - url: "{{ pb_remote_sources_dir }}/NGS_DNA-resources/snpEff/hg19.tar.gz"
         dest: "{{ HPC_ENV_PREFIX }}/data/snpEff-4.3/hg19.tar.gz"
         checksum: 'md5:75db3b74aac7eaa3295d4278443dbb70'
-      - url: "https://molgenis26.gcc.rug.nl/downloads/NGS_DNA-resources/inSilico.tar.gz"
+      - url: "{{ pb_remote_sources_dir }}/NGS_DNA-resources/inSilico.tar.gz"
         dest: "{{ HPC_ENV_PREFIX }}/data/inSilico/inSilico.tar.gz"
         checksum: 'md5:1b7e33b2977786819a2099e3895f623a'
-      - url: "https://molgenis26.gcc.rug.nl/downloads/NGS_DNA-resources/Agilent.tar.gz"
+      - url: "{{ pb_remote_sources_dir }}/NGS_DNA-resources/Agilent.tar.gz"
         dest: "{{ HPC_ENV_PREFIX }}/data/Agilent/Agilent.tar.gz"
         checksum: 'md5:0a76a2dde10ad1899cccc4f32f6ee804'
       - url: "https://github.com/molgenis/easybuild-easyconfigs/releases/download/{{ pb_ebconfigs_version }}/easybuild-easyconfigs-{{ pb_ebconfigs_version }}-custom.tar.gz"
