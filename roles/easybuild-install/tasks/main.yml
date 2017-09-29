@@ -78,10 +78,10 @@
     copy: no
   when: lua_install_from_source|default(false)
 - name: Compile and install Lua
-  shell: 
-    cmd: |
-       cd {{ easybuild_sources_dir }}/l/Lua/lua-{{ easybuild_lua_version }}
-       ./configure --with-static=yes --prefix={{ easybuild_software_dir }}/Lua/{{ easybuild_lua_version }} && make && make install
+  shell: >
+       cd {{ easybuild_sources_dir }}/l/Lua/lua-{{ easybuild_lua_version }};
+       ./configure --with-static=yes --prefix={{ easybuild_software_dir }}/Lua/{{ easybuild_lua_version }} && 
+       make && make install
   when: lua_install_from_source|default(false)
 
 #
@@ -123,7 +123,8 @@
     copy: no
   when: lmod_install_from_source|default(false)
 - name: Compile and install Lmod
-  shell: >
+  shell:
+    cmd: |
          export PATH={{ easybuild_software_dir }}/Lua/{{ easybuild_lua_version }}/bin:$PATH;
          cd {{ easybuild_sources_dir }}/l/Lmod/Lmod-{{ easybuild_lmod_version }};
          ./configure --prefix={{ easybuild_software_dir }} --with-lua-include={{ easybuild_software_dir }}/Lua/{{ easybuild_lua_version }}/include
