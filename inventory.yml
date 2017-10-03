@@ -13,6 +13,7 @@
 [clusterUIs]
 shark        ansible_host=rivershark
 calculon     ansible_host=calculon
+leucine-zipper     ansible_host=leucine-zipper
 boxy         ansible_host=boxy
 leela        ansible_host=leela
 vcluster1    ansible_host=vcluster1
@@ -28,6 +29,7 @@ shark        ansible_host=rivershark
 calculon     ansible_host=calculon
 boxy         ansible_host=boxy
 leela        ansible_host=leela
+leucine-zipper     ansible_host=leucine-zipper
 
 [EGI]
 vcluster1    ansible_host=vcluster1
@@ -43,3 +45,4 @@ boxy_dev     ansible_host=boxy
 shark        ansible_host=rivershark
 calculon     ansible_host=calculon
 boxy         ansible_host=boxy
+leucine-zipper     ansible_host=leucine-zipper
