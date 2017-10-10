@@ -58,14 +58,13 @@ class CallbackModule(CallbackBase):
     def human_log(self, data, color):
         self.term_columns = self.get_terminal_width()
         if type(data) == dict:
-            print(str("INFO: we've got expected 'data'; it's a dict.\n"))
-            for mykey in data.keys():
-                print(str("DEBUG: 'data' has key {0}.\n".format(mykey)))
+            #print(str("DEBUG: we've got expected 'data'; it's a dict.\n"))
+            #for mykey in data.keys():
+                #print(str("DEBUG: 'data' has key {0}.\n".format(mykey)))
             for field in FIELDS:
-                print(str("DEBUG: processing field: {0}.\n".format(field)))
+                #print(str("DEBUG: processing field: {0}.\n".format(field)))
                 no_log = data.get('_ansible_no_log')
                 if field in data.keys() and data[field] and no_log is not True:
-                #if no_log is not True:
                     output = self._format_output(data[field])
                     print(str(stringc("\n{0}: {1}".format(field, output.replace("\\n", "\n")), color)))
         else:
@@ -79,16 +78,16 @@ class CallbackModule(CallbackBase):
         # If output is a dict.
         #
         if type(output) == dict:
-            print(str("DEBUG2A: we've got a dict.\n"))
+            #print(str("DEBUG: we've got a dict.\n"))
             return json.dumps(output, indent=2)
         #
         # If output is a list of dicts.
         #
         elif type(output) == list and type(output[0]) == dict:
-            print(str("DEBUG2B: we've got a list of dicts.\n"))
+            #print(str("DEBUG: we've got a list of dicts.\n"))
             # This gets a little complicated because it potentially means
             # nested results, usually because of with_items.
-            print(str("DEBUGGY: we've got items.\n"))
+            #print(str("DEBUG: we've got items.\n"))
             real_output = list()
             for index, item in enumerate(output):
                 copy = item
@@ -102,7 +101,7 @@ class CallbackModule(CallbackBase):
         # If output is a list of strings.
         #
         elif type(output) == list and type(output[0]) != dict:
-            print(str("DEBUG2C: we've got a list of non dicts.\n"))
+            #print(str("DEBUG: we've got a list of non dicts.\n"))
             # Strip newline characters
             real_output = list()
             for item in output:
@@ -123,7 +122,7 @@ class CallbackModule(CallbackBase):
             #
             # I's a string, (or an int, float, etc.) just return it.
             #
-            print(str("DEBUG2D: we've got nothing special.\n"))
+            #print(str("DEBUG: we've got nothing special.\n"))
             return str(output)
 
     def on_any(self, *args, **kwargs):
@@ -204,7 +203,7 @@ class CallbackModule(CallbackBase):
         pass
 
     def v2_runner_on_failed(self, result, ignore_errors=False):
-        print(str("DEBUG: triggered v2_runner_on_failed.\n"))
+        #print(str("DEBUG: triggered v2_runner_on_failed.\n"))
         self.human_log(result._result, AC.COLOR_ERROR)
 
     def v2_runner_on_ok(self, result):
@@ -234,7 +233,7 @@ class CallbackModule(CallbackBase):
             pass
 
     def v2_runner_on_async_failed(self, result):
-        print(str("DEBUG: triggered  v2_runner_on_async_failed.\n"))
+        #print(str("DEBUG: triggered  v2_runner_on_async_failed.\n"))
         self.human_log(result._result, AC.COLOR_ERROR)
 
     def v2_playbook_on_start(self, playbook):
@@ -279,7 +278,7 @@ class CallbackModule(CallbackBase):
         pass
 
     def v2_playbook_on_item_failed(self, result):
-        print(str("DEBUG: triggered v2_playbook_on_item_failed.\n"))
+        #print(str("DEBUG: triggered v2_playbook_on_item_failed.\n"))
         self.human_log(result._result, AC.COLOR_ERROR)
         #pass
 
@@ -293,7 +292,7 @@ class CallbackModule(CallbackBase):
         pass
 
     def v2_playbook_item_on_failed(self, result):
-        print(str("DEBUG: v2_playbook_item_on_failed.\n"))
+        #print(str("DEBUG: v2_playbook_item_on_failed.\n"))
         self.human_log(result._result, AC.COLOR_ERROR)
         #pass
 
