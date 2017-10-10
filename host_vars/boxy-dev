@@ -4,7 +4,7 @@
 # Conventions for global environment variables:
 #  A. Use UPPERCASE underscore separated names like for shell env vars.
 #
-# file: host_vars/boxy_dev
+# file: host_vars/boxy-dev
 #
 HPC_ENV_PREFIX: "/groups/umcg-gcc/tmp03/ansible_test/apps/"
 ROOT: "/groups/umcg-gcc/tmp03/ansible_test"

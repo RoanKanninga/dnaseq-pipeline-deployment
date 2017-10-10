@@ -6,7 +6,7 @@
 #
 MODE_FILES_EXECUTE: "u=rwx,g=rwx,o=rx"
 MODE_FILES_REGULAR: "u=rw,g=rw,o=r"
-MODE_DIRS: "u=rwX,g=rwX,o=rX"
+MODE_DIRS: "u=rwX,g=rwXs,o=rX"
 ROOT: "{{ ansible_env.HOME }}/BBMRI"
 GROUP: "bbmri"
 #DEFAULT_USER: "vagrant"
@@ -25,3 +25,4 @@ pb_ebconfigs_prefix: "{{ easybuild_software_dir }}/easyconfigs/easybuild-easycon
 pb_tmp_lfs: "tmp01"
 pb_base: "{{ HPC_GROUP_PREFIX }}/{{ pb_tmp_lfs }}"
 pb_local_sources_dir: '~/Downloads/apps/sources'
+pb_remote_sources_dir: 'https://molgenis26.gcc.rug.nl/downloads/'
