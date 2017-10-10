@@ -27,7 +27,7 @@
     create: yes
 
 - name: Create required directories
-  file: dest="{{item}}" state='directory' mode="{{ MODE_DIRS }}" recurse='yes'
+  file: dest="{{item}}" state='directory' mode="{{ MODE_2775_HARD }}"
   with_items:
     - "{{ easybuild_sources_dir }}/l/Lmod"
     - "{{ easybuild_sources_dir }}/l/Lua"
@@ -68,7 +68,7 @@
   get_url:
     url: "http://sourceforge.net/projects/lmod/files/lua-{{ easybuild_lua_version }}.tar.bz2/download"
     dest: "{{ easybuild_sources_dir }}/l/Lua/lua-{{ easybuild_lua_version }}.tar.bz2"
-    mode: "{{ MODE_FILES_REGULAR }}"
+    mode: "{{ MODE_0664_HARD }}"
     checksum: 'md5:a8d0443fe79fc4e9aaded057d81304cd' # 5.1.4.9
   when: lua_install_from_source|default(false)
 - name: Decompress Lua
@@ -76,12 +76,13 @@
     src:  "{{ easybuild_sources_dir }}/l/Lua/lua-{{ easybuild_lua_version }}.tar.bz2"
     dest: "{{ easybuild_sources_dir }}/l/Lua/"
     copy: no
+    mode: "{{ MODE__775_SOFT }}"
   when: lua_install_from_source|default(false)
 - name: Compile and install Lua
-  shell: >
-       cd {{ easybuild_sources_dir }}/l/Lua/lua-{{ easybuild_lua_version }};
-       ./configure --with-static=yes --prefix={{ easybuild_software_dir }}/Lua/{{ easybuild_lua_version }} && 
-       make && make install
+  shell: |
+         cd {{ easybuild_sources_dir }}/l/Lua/lua-{{ easybuild_lua_version }}
+         ./configure --with-static=yes --prefix={{ easybuild_software_dir }}/Lua/{{ easybuild_lua_version }} \
+         && make && make install
   when: lua_install_from_source|default(false)
 
 #
@@ -114,22 +115,23 @@
     url: "https://github.com/TACC/Lmod/archive/{{ easybuild_lmod_version }}.tar.gz"
     dest: "{{ easybuild_sources_dir }}/l/Lmod/{{ easybuild_lmod_version }}.tar.gz"
     checksum: 'md5:a2ea3c83f08d4175f08f84ac2a9bd508'
-    mode: "{{ MODE_FILES_REGULAR }}"
+    mode: "{{ MODE_0664_HARD }}"
   when: lmod_install_from_source|default(false)
 - name: Decompress Lmod
   unarchive:
     src:  "{{ easybuild_sources_dir }}/l/Lmod/{{ easybuild_lmod_version }}.tar.gz"
     dest: "{{ easybuild_sources_dir }}/l/Lmod/"
     copy: no
+    mode: "{{ MODE__775_SOFT }}"
   when: lmod_install_from_source|default(false)
 - name: Compile and install Lmod
   shell:
     cmd: |
-         export PATH={{ easybuild_software_dir }}/Lua/{{ easybuild_lua_version }}/bin:$PATH;
-         cd {{ easybuild_sources_dir }}/l/Lmod/Lmod-{{ easybuild_lmod_version }};
-         ./configure --prefix={{ easybuild_software_dir }} --with-lua-include={{ easybuild_software_dir }}/Lua/{{ easybuild_lua_version }}/include
-                     --with-mpathSearch=YES
-                     --with-caseIndependentSorting=YES
+         export PATH={{ easybuild_software_dir }}/Lua/{{ easybuild_lua_version }}/bin:$PATH
+         cd {{ easybuild_sources_dir }}/l/Lmod/Lmod-{{ easybuild_lmod_version }}
+         ./configure --prefix={{ easybuild_software_dir }} --with-lua-include={{ easybuild_software_dir }}/Lua/{{ easybuild_lua_version }}/include \
+                     --with-mpathSearch=YES \
+                     --with-caseIndependentSorting=YES \
                      && make install
   when: lmod_install_from_source|default(false)
 
@@ -137,7 +139,7 @@
 # Update environment.
 #
 - name: Create global modules.bashrc with Lmod and EasyBuild environment config.
-  template: src="{{ item.src }}" dest="{{ easybuild_modules_dir }}/{{ item.dest }}" mode="{{ MODE_FILES_EXECUTE }}"
+  template: src="{{ item.src }}" dest="{{ easybuild_modules_dir }}/{{ item.dest }}" mode="{{ MODE_0664_HARD }}"
   with_items:
     - src: 'lmodrc.lua'
       dest: '.lmod/lmodrc.lua'
@@ -159,7 +161,7 @@
   get_url:
     url: "https://raw.githubusercontent.com/hpcugent/easybuild-framework/develop/easybuild/scripts/bootstrap_eb.py"
     dest: "{{ easybuild_sources_dir }}/e/EasyBuild/bootstrap_eb.py"
-    mode: "{{ MODE_FILES_EXECUTE }}"
+    mode: "{{ MODE_0664_HARD }}"
     #checksum: 'md5:3b9dab8edf5c8e25db8f6e7d33189a4a' We don't care about the version/checksum as the URL above just fetches the latest and greatest.
 
 #

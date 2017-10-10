@@ -4,9 +4,11 @@
 # Conventions for global environment variables:
 #  A. User UPPERCASE underscore separated names like for shell env vars.
 #
-MODE_FILES_EXECUTE: "u=rwx,g=rwx,o=rx"
-MODE_FILES_REGULAR: "u=rw,g=rw,o=r"
-MODE_DIRS: "u=rwX,g=rwXs,o=rX"
+MODE_2775_HARD: "u=rwx,g=rwxs,o=rx"
+MODE_2770_HARD: "u=rwx,g=rwxs,o="
+MODE_0775_HARD: "u=rwx,g=rwx,o=rx"
+MODE__775_SOFT: "u+rwX,g+rwX,o+rX,o-w"
+MODE_0664_HARD: "u=rw,g=rw,o=r"
 ROOT: "{{ ansible_env.HOME }}/BBMRI"
 GROUP: "bbmri"
 #DEFAULT_USER: "vagrant"
