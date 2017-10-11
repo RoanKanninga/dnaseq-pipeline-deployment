@@ -30,52 +30,64 @@ except ImportError:
     import json
 from ansible.utils.color import stringc
 from ansible import constants as AC
+from ansible.plugins.callback import CallbackBase
 
 __metaclass__ = type
 
 #
 # List of fields for which to reformat output.
 #
-FIELDS = ['cmd', 'command', 'start', 'end', 'delta', 'msg', 'stdout', 'stderr', 'results']
+FIELDS = ['cmd', 'command', 'start', 'end', 'delta', 'msg', 'stdout', 'stderr', 'results', 'changed', 'failed']
 
-class CallbackModule(object):
-
+class CallbackModule(CallbackBase):
+    
     """
     Ansible callback plugin for human-readable result logging
     """
-    CALLBACK_VERSION = 2.1
+    CALLBACK_VERSION = 2.0
     CALLBACK_TYPE = 'notification'
     CALLBACK_NAME = 'human_log'
     CALLBACK_NEEDS_WHITELIST = False
-
+    
     def get_terminal_width(self):
         fcall = fcntl.ioctl(1, termios.TIOCGWINSZ,
                             struct.pack('hhhh', 0, 0, 0, 0))
         term_lines, term_columns = struct.unpack('hhhh', fcall)[:2]
         return term_columns
-
+    
     def human_log(self, data, color):
         self.term_columns = self.get_terminal_width()
         if type(data) == dict:
+            #print(str("DEBUG: we've got expected 'data'; it's a dict.\n"))
+            #for mykey in data.keys():
+                #print(str("DEBUG: 'data' has key {0}.\n".format(mykey)))
             for field in FIELDS:
+                #print(str("DEBUG: processing field: {0}.\n".format(field)))
                 no_log = data.get('_ansible_no_log')
                 if field in data.keys() and data[field] and no_log is not True:
                     output = self._format_output(data[field])
                     print(str(stringc("\n{0}: {1}".format(field, output.replace("\\n", "\n")), color)))
-
+        else:
+            print(str("ERROR: we've got unexpected 'data'.\n"))
+    
     def _format_output(self, output):
         # Strip Unicode
         #if type(output) == unicode:
         #    output = output.encode(sys.getdefaultencoding(), 'replace')
-
-        # If output is a dict
+        #
+        # If output is a dict.
+        #
         if type(output) == dict:
+            #print(str("DEBUG: we've got a dict.\n"))
             return json.dumps(output, indent=2)
-
-        # If output is a list of dicts
-        if type(output) == list and type(output[0]) == dict:
+        #
+        # If output is a list of dicts.
+        #
+        elif type(output) == list and type(output[0]) == dict:
+            #print(str("DEBUG: we've got a list of dicts.\n"))
             # This gets a little complicated because it potentially means
             # nested results, usually because of with_items.
+            #print(str("DEBUG: we've got items.\n"))
             real_output = list()
             for index, item in enumerate(output):
                 copy = item
@@ -85,9 +97,11 @@ class CallbackModule(object):
                             copy[field] = self._format_output(item[field])
                 real_output.append(copy)
             return json.dumps(output, indent=2)
-
-        # If output is a list of strings
-        if type(output) == list and type(output[0]) != dict:
+        #
+        # If output is a list of strings.
+        #
+        elif type(output) == list and type(output[0]) != dict:
+            #print(str("DEBUG: we've got a list of non dicts.\n"))
             # Strip newline characters
             real_output = list()
             for item in output:
@@ -96,7 +110,6 @@ class CallbackModule(object):
                         real_output.append(string)
                 else:
                     real_output.append(item)
-
             #
             # Reformat lists with line breaks,
             # but only if line length > the terminal width.
@@ -105,9 +118,12 @@ class CallbackModule(object):
                 return "\n" + "\n".join(real_output)
             else:
                 return " ".join(real_output)
-
-        # Otherwise it's a string, (or an int, float, etc.) just return it
-        return str(output)
+        else:
+            #
+            # I's a string, (or an int, float, etc.) just return it.
+            #
+            #print(str("DEBUG: we've got nothing special.\n"))
+            return str(output)
 
     def on_any(self, *args, **kwargs):
         pass
@@ -187,6 +203,7 @@ class CallbackModule(object):
         pass
 
     def v2_runner_on_failed(self, result, ignore_errors=False):
+        #print(str("DEBUG: triggered v2_runner_on_failed.\n"))
         self.human_log(result._result, AC.COLOR_ERROR)
 
     def v2_runner_on_ok(self, result):
@@ -216,6 +233,7 @@ class CallbackModule(object):
             pass
 
     def v2_runner_on_async_failed(self, result):
+        #print(str("DEBUG: triggered  v2_runner_on_async_failed.\n"))
         self.human_log(result._result, AC.COLOR_ERROR)
 
     def v2_playbook_on_start(self, playbook):
@@ -260,7 +278,9 @@ class CallbackModule(object):
         pass
 
     def v2_playbook_on_item_failed(self, result):
-        pass
+        #print(str("DEBUG: triggered v2_playbook_on_item_failed.\n"))
+        self.human_log(result._result, AC.COLOR_ERROR)
+        #pass
 
     def v2_playbook_on_item_skipped(self, result):
         pass
@@ -272,7 +292,9 @@ class CallbackModule(object):
         pass
 
     def v2_playbook_item_on_failed(self, result):
-        pass
+        #print(str("DEBUG: v2_playbook_item_on_failed.\n"))
+        self.human_log(result._result, AC.COLOR_ERROR)
+        #pass
 
     def v2_playbook_item_on_skipped(self, result):
         pass
