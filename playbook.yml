@@ -17,75 +17,115 @@
       - "{{ easybuild_sources_dir }}/e/easyconfigs"
       - "{{ easybuild_modules_dir }}"
       - "{{ pb_ebconfigs_prefix }}"
+      - "{{ HPC_ENV_PREFIX }}/.tmp"
       - "{{ HPC_ENV_PREFIX }}/data"
       - "{{ HPC_ENV_PREFIX }}/data/dbSNP"
       - "{{ HPC_ENV_PREFIX }}/data/1000G/phase1/"
       - "{{ HPC_ENV_PREFIX }}/data/snpEff-4.3/"
       - "{{ HPC_ENV_PREFIX }}/data/inSilico/"
       - "{{ HPC_ENV_PREFIX }}/data/Agilent/"
+      - "{{ HPC_ENV_PREFIX }}/data/UMCG/"	
   - name: Create main folder structure for data analysis group.
-    file: dest="{{item}}" state='directory' mode="{{ MODE_2770_HARD }}"
+    file: dest="{{item}}" state='directory' mode="{{ MODE__775_SOFT }}"
     with_items:
       - "{{ pb_base }}/generatedscripts"
       - "{{ pb_base }}/Samplesheets"
       - "{{ pb_base }}/projects"
       - "{{ pb_base }}/logs"
       - "{{ pb_base }}/tmp"
+
+  - name: Deploy NGS_DNA module with EasyBuild
+    shell: >
+           source {{ easybuild_modules_dir }}/modules.bashrc
+           && module load EasyBuild
+           && eb {{ pb_ebconfigs_prefix }}/n/NGS_DNA/NGS_DNA-{{ pb_ngs_dna_version }}.eb --robot --robot-paths="{{ pb_ebconfigs_prefix }}/:"
+
+  - name: Deploy NGS_Automated module with EasyBuild
+    shell: >
+           source {{ easybuild_modules_dir }}/modules.bashrc
+           && module load EasyBuild
+           && eb {{ pb_ebconfigs_prefix }}/n/NGS_Automated/NGS_Automated-{{ pb_ngs_Automated_version }}.eb --robot --robot-paths="{{ pb_ebconfigs_prefix }}/:"
+
   - name: Download reference data
     get_url: url="{{ item.url }}" dest="{{ item.dest }}" checksum="{{ item.checksum }}" mode="{{ MODE_0664_HARD }}"
     with_items:
-      - url: "{{ pb_remote_sources_dir }}/NGS_DNA-resources/dbSNP/dbsnp_137.b37.vcf.idx"
+      - url: "{{ pb_remote_sources_dir }}/dbSNP/dbsnp_137.b37.vcf.idx"
         dest: "{{ HPC_ENV_PREFIX }}/data/dbSNP/dbsnp_137.b37.vcf.idx"
         checksum: 'md5:80a7ce491b9ca192bfdab55d6b759e2e'
-      - url: "{{ pb_remote_sources_dir }}/NGS_DNA-resources/dbSNP/dbsnp_137.b37.vcf"
+      - url: "{{ pb_remote_sources_dir }}/dbSNP/dbsnp_137.b37.vcf"
         dest: "{{ HPC_ENV_PREFIX }}/data/dbSNP/dbsnp_137.b37.vcf"
         checksum: 'md5:956b9e21634f1315ef41a010faf291b8'
-      - url: "{{ pb_remote_sources_dir }}/NGS_DNA-resources/referenceGenome/human_g1k_v37_phiX.fasta"
+      - url: "{{ pb_remote_sources_dir }}/referenceGenome/human_g1k_v37_phiX.fasta"
         dest: "{{ HPC_ENV_PREFIX }}/data/1000G/phase1/human_g1k_v37_phiX.fasta"
         checksum: 'md5:a74fde3942bb0816f30b2f6cfe2c0ec5'
-      - url: "{{ pb_remote_sources_dir }}/NGS_DNA-resources/referenceGenome/human_g1k_v37_phiX.dict"
+      - url: "{{ pb_remote_sources_dir }}/referenceGenome/human_g1k_v37_phiX.dict"
         dest: "{{ HPC_ENV_PREFIX }}/data/1000G/phase1/human_g1k_v37_phiX.dict"
         checksum: 'md5:bbfeb6a82dede252a0fc6dde9485d2d2'
-      - url: "{{ pb_remote_sources_dir }}/NGS_DNA-resources/referenceGenome/human_g1k_v37_phiX.fasta.amb"
+      - url: "{{ pb_remote_sources_dir }}/referenceGenome/human_g1k_v37_phiX.fasta.amb"
         dest: "{{ HPC_ENV_PREFIX }}/data/1000G/phase1/human_g1k_v37_phiX.fasta.amb"
         checksum: 'md5:7558698df27f62bc0ed971664e8089a4'
-      - url: "{{ pb_remote_sources_dir }}/NGS_DNA-resources/referenceGenome/human_g1k_v37_phiX.fasta.ann"
+      - url: "{{ pb_remote_sources_dir }}/referenceGenome/human_g1k_v37_phiX.fasta.ann"
         dest: "{{ HPC_ENV_PREFIX }}/data/1000G/phase1/human_g1k_v37_phiX.fasta.ann"
         checksum: 'md5:e858be5e40ee30ba8c0f584395188c0e'
-      - url: "{{ pb_remote_sources_dir }}/NGS_DNA-resources/referenceGenome/human_g1k_v37_phiX.fasta.bwt"
+      - url: "{{ pb_remote_sources_dir }}/referenceGenome/human_g1k_v37_phiX.fasta.bwt"
         dest: "{{ HPC_ENV_PREFIX }}/data/1000G/phase1/human_g1k_v37_phiX.fasta.bwt"
         checksum: 'md5:c0570831ca6fff13ee6157eeb1813b88'
-      - url: "{{ pb_remote_sources_dir }}/NGS_DNA-resources/referenceGenome/human_g1k_v37_phiX.fasta.fai"
+      - url: "{{ pb_remote_sources_dir }}/referenceGenome/human_g1k_v37_phiX.fasta.fai"
         dest: "{{ HPC_ENV_PREFIX }}/data/1000G/phase1/human_g1k_v37_phiX.fasta.fai"
         checksum: 'md5:2bc786e8a1f6b71ba75c3368c2e50b19'
-      - url: "{{ pb_remote_sources_dir }}/NGS_DNA-resources/referenceGenome/human_g1k_v37_phiX.fasta.pac"
+      - url: "{{ pb_remote_sources_dir }}/referenceGenome/human_g1k_v37_phiX.fasta.pac"
         dest: "{{ HPC_ENV_PREFIX }}/data/1000G/phase1/human_g1k_v37_phiX.fasta.pac"
         checksum: 'md5:b42d311e535804ca80aa87f72a52c083'
-      - url: "{{ pb_remote_sources_dir }}/NGS_DNA-resources/referenceGenome/human_g1k_v37_phiX.fasta.sa"
+      - url: "{{ pb_remote_sources_dir }}/referenceGenome/human_g1k_v37_phiX.fasta.sa"
         dest: "{{ HPC_ENV_PREFIX }}/data/1000G/phase1/human_g1k_v37_phiX.fasta.sa"
         checksum: 'md5:20e20f4d6f884f5bf81d8beafe2eb098'
-      - url: "{{ pb_remote_sources_dir }}/NGS_DNA-resources/snpEff/hg19.tar.gz"
+      - url: "{{ pb_remote_sources_dir }}/snpEff/hg19.tar.gz"
         dest: "{{ HPC_ENV_PREFIX }}/data/snpEff-4.3/hg19.tar.gz"
         checksum: 'md5:75db3b74aac7eaa3295d4278443dbb70'
-      - url: "{{ pb_remote_sources_dir }}/NGS_DNA-resources/inSilico.tar.gz"
+      - url: "{{ pb_remote_sources_dir }}/inSilico.tar.gz"
         dest: "{{ HPC_ENV_PREFIX }}/data/inSilico/inSilico.tar.gz"
         checksum: 'md5:1b7e33b2977786819a2099e3895f623a'
-      - url: "{{ pb_remote_sources_dir }}/NGS_DNA-resources/Agilent.tar.gz"
+      - url: "{{ pb_remote_sources_dir }}/Agilent.tar.gz"
         dest: "{{ HPC_ENV_PREFIX }}/data/Agilent/Agilent.tar.gz"
         checksum: 'md5:0a76a2dde10ad1899cccc4f32f6ee804'
-      - url: "https://github.com/molgenis/easybuild-easyconfigs/releases/download/{{ pb_ebconfigs_version }}/easybuild-easyconfigs-{{ pb_ebconfigs_version }}-custom.tar.gz"
-        dest: "{{ easybuild_sources_dir }}/e/easyconfigs/{{ pb_ebconfigs_version }}-custom.tar.gz"
-        checksum: 'md5:259b8b100ceecdc434a2ecb2516556f4'
+      - url: "{{ pb_remote_sources_dir }}/GAVIN.tar.gz"
+        dest: "{{ HPC_ENV_PREFIX }}/data/GAVIN.tar.gz"
+        checksum: 'md5:ec2c8a4817e63f9fd2d03a425f89fa1c'
+      - url: "{{ pb_remote_sources_dir }}/HPO.tar.gz"
+        dest: "{{ HPC_ENV_PREFIX }}/data/HPO.tar.gz"
+        checksum: 'md5:6f4cd0f1ab3b465d7afc2f02aad340f0'
+      - url: "{{ pb_remote_sources_dir }}/gonl.tar.gz"
+        dest: "{{ HPC_ENV_PREFIX }}/data/gonl.tar.gz"
+        checksum: 'md5:c44103187ce6c920c55f94a569b34b5b'
+      - url: "{{ pb_remote_sources_dir }}/ExAC.tar.gz"
+        dest: "{{ HPC_ENV_PREFIX }}/data/ExAC.tar.gz"
+        checksum: 'md5:68ae245dc9ed296a7832616f63078a97'
+      - url: "{{ pb_remote_sources_dir }}/UMCG/Diagnostics.tar.gz"
+        dest: "{{ HPC_ENV_PREFIX }}/data/UMCG/Diagnostics.tar.gz"
+        checksum: 'md5:0d65f9309d8cc96f85faf5769b3e7c4b'
+      - url: "https://github.com/molgenis/easybuild-easyconfigs/releases/download/v{{ pb_ebconfigs_version }}/easybuild-easyconfigs-{{ pb_ebconfigs_version }}.tar.gz"
+        dest: "{{ easybuild_sources_dir }}/e/easyconfigs/{{ pb_ebconfigs_version }}.tar.gz"
+        checksum: 'md5:b56e18d46af1f9608cacb03fcf9b1df1'
   - name: Extract downloaded sources and reference data.
     unarchive: src="{{ item.src }}" dest="{{ item.dest }}" remote_src=yes mode="{{ MODE__775_SOFT }}"
     with_items:
       - src:  "{{ HPC_ENV_PREFIX }}/data/snpEff-4.3/hg19.tar.gz"
         dest: "{{ HPC_ENV_PREFIX }}/data/snpEff-4.3/"
+      - src:  "{{ HPC_ENV_PREFIX }}/data/GAVIN.tar.gz"
+        dest: "{{ HPC_ENV_PREFIX }}/data/"
+      - src:  "{{ HPC_ENV_PREFIX }}/data/HPO.tar.gz"
+        dest: "{{ HPC_ENV_PREFIX }}/data/"
+      - src:  "{{ HPC_ENV_PREFIX }}/data/gonl.tar.gz"
+        dest: "{{ HPC_ENV_PREFIX }}/data/"
+      - src:  "{{ HPC_ENV_PREFIX }}/data/ExAC.tar.gz"
+        dest: "{{ HPC_ENV_PREFIX }}/data/"
+     # - src:  "{{ HPC_ENV_PREFIX }}/data/UMCG/Diagnostics.tar.gz"
+     #   dest: "{{ HPC_ENV_PREFIX }}/data/UMCG"
       - src:  "{{ HPC_ENV_PREFIX }}/data/inSilico/inSilico.tar.gz"
         dest: "{{ HPC_ENV_PREFIX }}/data/"
-      - src:  "{{ HPC_ENV_PREFIX }}/data/Agilent/Agilent.tar.gz"
-        dest: "{{ HPC_ENV_PREFIX }}/data/Agilent/"
-      - src:  "{{ easybuild_sources_dir }}/e/easyconfigs/{{ pb_ebconfigs_version }}-custom.tar.gz"
+     # - src:  "{{ HPC_ENV_PREFIX }}/data/Agilent/Agilent.tar.gz"
+     #   dest: "{{ HPC_ENV_PREFIX }}/data/Agilent/"
+      - src:  "{{ easybuild_sources_dir }}/e/easyconfigs/{{ pb_ebconfigs_version }}.tar.gz"
         dest: "{{ easybuild_software_dir }}/easyconfigs"
   - name: Copy sources for software packages, which cannot be downloaded automagically by EB for technical or legal reasons.
     copy: src="{{ item.src }}" dest="{{ item.dest }}" mode="{{ MODE_0664_HARD }}"
@@ -110,8 +150,3 @@
         dest: "{{ easybuild_sources_dir }}/b/bzip2/"
       - src:   "{{ pb_local_sources_dir }}/p/Python/extensions/argparse-1.2.1.tar.gz"
         dest: "{{ easybuild_sources_dir }}/p/Python/extensions/"
-  - name: Deploy NGS_DNA module with EasyBuild
-    shell: >
-           source {{ easybuild_modules_dir }}/modules.bashrc
-           && module load EasyBuild
-           && eb {{ pb_ebconfigs_prefix }}/n/NGS_DNA/NGS_DNA-{{ pb_ngs_dna_version }}.eb --robot --robot-paths="{{ pb_ebconfigs_prefix }}/:"
