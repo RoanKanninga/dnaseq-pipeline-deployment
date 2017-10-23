@@ -20,8 +20,12 @@
       export PATH={{ easybuild_software_dir }}/Lua/{{ easybuild_lua_version }}/bin:$PATH;
       export PATH={{ easybuild_software_dir }}/lmod/lmod/libexec:$PATH
       unset MODULEPATH # Make sure Lmod starts with a clean MODULEPATH
-      source {{ easybuild_software_dir }}/lmod/lmod/init/bash
-      source {{ easybuild_modules_dir }}/modules.bashrc
+      if [ -r {{ easybuild_software_dir }}/lmod/lmod/init/bash ]; then
+        source {{ easybuild_software_dir }}/lmod/lmod/init/bash
+      fi
+      if [ -r {{ easybuild_modules_dir }}/modules.bashrc ]; then
+        source {{ easybuild_modules_dir }}/modules.bashrc
+      fi
     marker: "# {mark} ANSIBLE MANAGED BLOCK - lua lmod modules in path"
     insertafter: EOF
     create: yes
@@ -46,6 +50,7 @@
   # Example output:
   # Lua 5.1.4.7-rtm  Copyright (C) 1994-2008 Lua.org, PUC-Rio
   #
+  #shell: ". ~/.modulesrc >/dev/null 2>&1 && lua -v 2>&1"
   shell: ". ~/.modulesrc && lua -v"
   args:
     executable: /bin/bash
@@ -94,10 +99,12 @@
   # Modules based on Lua: Version 6.5.8  2016-09-03 13:41 -05:00 (CDT)
   #    by Robert McLay mclay@tacc.utexas.edu
   #
-  shell: "unset MODULEPATH && . ~/.modulesrc >/dev/null && lmod -v 2>&1 | grep -i version"
+  shell: "unset MODULEPATH && . ~/.modulesrc >/dev/null 2>&1 && lmod -v 2>&1 | grep -i version"
   args:
     executable: /bin/bash
     warn: no
+  environment:
+    SOURCE_HPC_ENV: "True"   # Required to source our modules.bashrc in non-interactive shells.
   changed_when: false
   failed_when: false
   check_mode: no
@@ -125,8 +132,7 @@
     mode: "{{ MODE__775_SOFT }}"
   when: lmod_install_from_source|default(false)
 - name: Compile and install Lmod
-  shell:
-    cmd: |
+  shell: |
          export PATH={{ easybuild_software_dir }}/Lua/{{ easybuild_lua_version }}/bin:$PATH
          cd {{ easybuild_sources_dir }}/l/Lmod/Lmod-{{ easybuild_lmod_version }}
          ./configure --prefix={{ easybuild_software_dir }} --with-lua-include={{ easybuild_software_dir }}/Lua/{{ easybuild_lua_version }}/include \
