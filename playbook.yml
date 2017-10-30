@@ -21,14 +21,16 @@
       - "{{ easybuild_sources_dir }}/n/numactl"
       - "{{ easybuild_modules_dir }}"
       - "{{ pb_ebconfigs_prefix }}"
+      - "{{ HPC_ENV_PREFIX }}/.tmp"
       - "{{ HPC_ENV_PREFIX }}/data"
       - "{{ HPC_ENV_PREFIX }}/data/dbSNP"
       - "{{ HPC_ENV_PREFIX }}/data/1000G/phase1/"
       - "{{ HPC_ENV_PREFIX }}/data/snpEff-4.3/"
       - "{{ HPC_ENV_PREFIX }}/data/inSilico/"
       - "{{ HPC_ENV_PREFIX }}/data/Agilent/"
+      - "{{ HPC_ENV_PREFIX }}/data/UMCG/"
   - name: Create main folder structure for data analysis group.
-    file: dest="{{item}}" state='directory' mode="{{ MODE_2770_HARD }}"
+    file: dest="{{item}}" state='directory' mode="{{ MODE_2775_HARD }}"
     with_items:
       - "{{ pb_base }}/generatedscripts"
       - "{{ pb_base }}/Samplesheets"
@@ -45,10 +47,10 @@
         dest:         "{{ HPC_ENV_PREFIX }}/data/dbSNP/"
         checksum: 'md5:956b9e21634f1315ef41a010faf291b8'
       - url: "{{ pb_remote_env_cache_dir }}/data/1000G/phase1/human_g1k_v37_phiX.fasta"
-        dest: "{{ HPC_ENV_PREFIX }}/data/1000G/phase1/"
+        dest:         "{{ HPC_ENV_PREFIX }}/data/1000G/phase1/"
         checksum: 'md5:a74fde3942bb0816f30b2f6cfe2c0ec5'
       - url: "{{ pb_remote_env_cache_dir }}/data/1000G/phase1/human_g1k_v37_phiX.dict"
-        dest: "{{ HPC_ENV_PREFIX }}/data/1000G/phase1/"
+        dest:         "{{ HPC_ENV_PREFIX }}/data/1000G/phase1/"
         checksum: 'md5:bbfeb6a82dede252a0fc6dde9485d2d2'
       - url: "{{ pb_remote_env_cache_dir }}/data/1000G/phase1/human_g1k_v37_phiX.fasta.amb"
         dest: "{{ HPC_ENV_PREFIX }}/data/1000G/phase1/"
@@ -72,11 +74,29 @@
         dest:         "{{ HPC_ENV_PREFIX }}/data/snpEff-4.3/"
         checksum: 'md5:75db3b74aac7eaa3295d4278443dbb70'
       - url: "{{ pb_remote_env_cache_dir }}/data/inSilico.tar.gz"
-        dest:         "{{ HPC_ENV_PREFIX }}/data/inSilico/"
+        dest: "{{ HPC_ENV_PREFIX }}/data/inSilico/inSilico.tar.gz"
         checksum: 'md5:1b7e33b2977786819a2099e3895f623a'
       - url: "{{ pb_remote_env_cache_dir }}/data/Agilent.tar.gz"
-        dest:         "{{ HPC_ENV_PREFIX }}/data/Agilent/"
+        dest: "{{ HPC_ENV_PREFIX }}/data/Agilent/Agilent.tar.gz"
         checksum: 'md5:0a76a2dde10ad1899cccc4f32f6ee804'
+      - url: "{{ pb_remote_env_cache_dir }}/data/GAVIN.tar.gz"
+        dest: "{{ HPC_ENV_PREFIX }}/data/GAVIN.tar.gz"
+        checksum: 'md5:ec2c8a4817e63f9fd2d03a425f89fa1c'
+      - url: "{{ pb_remote_env_cache_dir }}/data/HPO.tar.gz"
+        dest: "{{ HPC_ENV_PREFIX }}/data/HPO.tar.gz"
+        checksum: 'md5:6f4cd0f1ab3b465d7afc2f02aad340f0'
+      - url: "{{ pb_remote_env_cache_dir }}/data/gonl.tar.gz"
+        dest: "{{ HPC_ENV_PREFIX }}/data/gonl.tar.gz"
+        checksum: 'md5:c44103187ce6c920c55f94a569b34b5b'
+      - url: "{{ pb_remote_env_cache_dir }}/data/ExAC.tar.gz"
+        dest: "{{ HPC_ENV_PREFIX }}/data/ExAC.tar.gz"
+        checksum: 'md5:68ae245dc9ed296a7832616f63078a97'
+      - url: "{{ pb_remote_env_cache_dir }}/data/UMCG/Diagnostics.tar.gz"
+        dest:         "{{ HPC_ENV_PREFIX }}/data/UMCG/Diagnostics.tar.gz"
+        checksum: 'md5:0d65f9309d8cc96f85faf5769b3e7c4b'
+      - url: "{{ pb_remote_env_cache_dir }}/data/inSilico.tar.gz"
+        dest:         "{{ HPC_ENV_PREFIX }}/data/inSilico/"
+        checksum: 'md5:1b7e33b2977786819a2099e3895f623a'
       - url: "https://github.com/molgenis/easybuild-easyconfigs/releases/download/{{ pb_ebconfigs_version }}/easybuild-easyconfigs-{{ pb_ebconfigs_version }}.tar.gz"
         dest: "{{ easybuild_sources_dir }}/e/easyconfigs/"
         checksum: "{{ pb_ebconfigs_checksum }}"
@@ -100,6 +120,16 @@
     with_items:
       - src:  "{{ HPC_ENV_PREFIX }}/data/snpEff-4.3/hg19.tar.gz"
         dest: "{{ HPC_ENV_PREFIX }}/data/snpEff-4.3/"
+      - src:  "{{ HPC_ENV_PREFIX }}/data/GAVIN.tar.gz"
+        dest: "{{ HPC_ENV_PREFIX }}/data/"
+      - src:  "{{ HPC_ENV_PREFIX }}/data/HPO.tar.gz"
+        dest: "{{ HPC_ENV_PREFIX }}/data/"
+      - src:  "{{ HPC_ENV_PREFIX }}/data/gonl.tar.gz"
+        dest: "{{ HPC_ENV_PREFIX }}/data/"
+      - src:  "{{ HPC_ENV_PREFIX }}/data/ExAC.tar.gz"
+        dest: "{{ HPC_ENV_PREFIX }}/data/"
+      - src:  "{{ HPC_ENV_PREFIX }}/data/UMCG/Diagnostics.tar.gz"
+        dest: "{{ HPC_ENV_PREFIX }}/data/UMCG"
       - src:  "{{ HPC_ENV_PREFIX }}/data/inSilico/inSilico.tar.gz"
         dest: "{{ HPC_ENV_PREFIX }}/data/"
       - src:  "{{ HPC_ENV_PREFIX }}/data/Agilent/Agilent.tar.gz"
@@ -111,21 +141,24 @@
     #       You will have to download these yourself to your local system, so the playbook can copy them to your target systems.
     copy: src="{{ item.src }}" dest="{{ item.dest }}" mode="{{ MODE_0664_HARD }}"
     with_items:
-      - src:  "{{ pb_local_env_cache_dir }}/sources/g/GATK/GenomeAnalysisTK-3.7.tar.bz2"
-        dest:          "{{ easybuild_sources_dir }}/g/GATK/"
-      - src:  "{{ pb_local_env_cache_dir }}/sources/j/Java/jdk-8u45-linux-x64.tar.gz"
-        dest:          "{{ easybuild_sources_dir }}/j/Java/"
-      - src:  "{{ pb_local_env_cache_dir }}/sources/j/Java/jdk-8u74-linux-x64.tar.gz"
-        dest:          "{{ easybuild_sources_dir }}/j/Java/"
-      - src:  "{{ pb_local_env_cache_dir }}/sources/j/Java/jdk-7u80-linux-x64.tar.gz"
-        dest:          "{{ easybuild_sources_dir }}/j/Java/"
-      #- src:  "{{ pb_local_env_cache_dir }}/sources/b/bzip2/bzip2-1.0.6.tar.gz"
-      #  dest:          "{{ easybuild_sources_dir }}/b/bzip2/"
-      #- src:  "{{ pb_local_env_cache_dir }}/sources/p/Python/extensions/argparse-1.2.1.tar.gz"
-      #  dest:          "{{ easybuild_sources_dir }}/p/Python/extensions/"
+      - src:   "{{ pb_local_sources_dir }}/g/GATK/GenomeAnalysisTK-3.7.tar.bz2"
+        dest: "{{ easybuild_sources_dir }}/g/GATK/"
+      - src:   "{{ pb_local_sources_dir }}/j/Java/jdk-8u45-linux-x64.tar.gz"
+        dest: "{{ easybuild_sources_dir }}/j/Java/"
+      - src:   "{{ pb_local_sources_dir }}/j/Java/jdk-8u74-linux-x64.tar.gz"
+        dest: "{{ easybuild_sources_dir }}/j/Java/"
+      - src:   "{{ pb_local_sources_dir }}/j/Java/jdk-7u80-linux-x64.tar.gz"
+        dest: "{{ easybuild_sources_dir }}/j/Java/"
   - name: Deploy NGS_DNA module with EasyBuild
     shell: |
            source {{ easybuild_modules_dir }}/modules.bashrc \
            && module load "EasyBuild/{{ easybuild_eb_version }}" \
            && eb --robot --robot-paths="{{ pb_ebconfigs_prefix }}/:" \
               {{ pb_ebconfigs_prefix }}/n/NGS_DNA/NGS_DNA-{{ pb_ngs_dna_version }}.eb
+
+  - name: Deploy NGS_Automated module with EasyBuild
+    shell: |
+           source {{ easybuild_modules_dir }}/modules.bashrc \
+           && module load "EasyBuild/{{ easybuild_eb_version }}" \
+           && eb --robot --robot-paths="{{ pb_ebconfigs_prefix }}/:" \
+              {{ pb_ebconfigs_prefix }}/n/NGS_Automated/NGS_Automated-{{ pb_ngs_Automated_version }}.eb
